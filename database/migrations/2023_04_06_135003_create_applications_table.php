@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {
-            $table->id();
+            $table->primary(['student_id', 'offer_id']);
             $table->foreignId('student_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('offer_id')->constrained('internship_offers')->onUpdate('cascade')->onDelete('cascade');
             $table->date('date');
             $table->string('status');
             $table->text('rejection_motive')->nullable();
-            $table->index(['offer_id', 'student_id']);
         });
     }
 
