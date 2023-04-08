@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('internship_supervisors', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->string('speciality');
+            $table->string('academic_year');
+            $table->integer('semester');
+            $table->date('date_of_birth');
         });
 
         Schema::enableForeignKeyConstraints();
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('internship_supervisors');
+        Schema::dropIfExists('students');
     }
 };

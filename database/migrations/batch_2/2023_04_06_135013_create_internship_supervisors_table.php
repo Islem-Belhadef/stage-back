@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('super_administrators', function (Blueprint $table) {
+        Schema::create('internship_supervisors', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('company_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
         });
 
         Schema::enableForeignKeyConstraints();
@@ -31,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('super_administrators');
+        Schema::dropIfExists('internship_supervisors');
     }
 };
