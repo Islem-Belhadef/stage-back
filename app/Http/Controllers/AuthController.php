@@ -60,9 +60,12 @@ class AuthController extends Controller
             'semester' => $request->semester,
             'academic_year' => $request->academic_year,
             'date_of_birth' => $request->date_of_birth,
+            'user_id' => $user->id
         ]);
 
         $token = $user->createToken('authToken')->accessToken;
+
+//        auth()->login($user);
 
         return response()->json([
             'token' => $token,

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration');
-            $table->string('status');
+            $table->tinyInteger('status')->default(0);
             $table->date('date');
             $table->text('rejection_motive')->nullable();
             $table->string('title');

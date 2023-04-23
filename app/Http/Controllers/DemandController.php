@@ -31,18 +31,19 @@ class DemandController extends Controller
      * Store a newly created resource in storage.
      * @throws ValidationException
      */
-    public function store(Request $request): array
+    public function store(Request $request): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
     {
 
-        $this->validate($request, [
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date',
-            'duration' => 'required|integer',
-            'supervisor_email' => 'required|email',
-            'title' => 'required|min:12|max:200',
-        ]);
+//        $this->validate($request, [
+//            'start_date' => 'required|date|after_or_equal:today',
+//            'end_date' => 'required|date',
+//            'duration' => 'required|integer',
+//            'supervisor_email' => 'required|email',
+//            'title' => 'required|min:12|max:200',
+//        ]);
 
         $demand = Demand::create([
+            'student_id' => $request->student_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'duration' => $request->duration,
@@ -53,20 +54,25 @@ class DemandController extends Controller
             'title' => $request->title,
         ]);
 
-        $user = User::where('email', $request->supervisor_email);
+        $user = User::find('email', $request->supervisor_email);
 
         $pwd = Str::random(12);
 
-        !$user && User::create([
-            'email' => $demand->supervisor_email,
-            'password' => bcrypt($pwd),
-            'first_name' => null,
-            'last_name' => null,
-        ]);
+        if (!$user) {
+            $usr = User::create([
+                'email' => $demand->supervisor_email,
+                'password' => bcrypt($pwd),
+                'first_name' => null,
+                'last_name' => null,
+                'role' => 2
+            ]);
+
+            return response(["demand" => $demand, "user" => $usr], 200);
+        }
 
 //        Send email with account information to the supervisorF
 
-        return ["demand" => $demand];
+        return response(["demand" => $demand, "user" => $user], 200);
     }
 
     /**
@@ -90,7 +96,11 @@ class DemandController extends Controller
      */
     public function update(Request $request, Demand $demand)
     {
-        //
+        $dem = Demand::find($demand->id);
+        $dem->status = $request->status;
+        $dem->save();
+
+        return response($dem, 200);
     }
 
     /**
@@ -98,6 +108,9 @@ class DemandController extends Controller
      */
     public function destroy(Demand $demand)
     {
-        //
+        $dem = Demand::find($demand->id);
+        $dem->delete();
+
+        return response("Demand deleted", 200);
     }
 }

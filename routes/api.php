@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DemandController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,16 @@ Route::prefix('/auth')->group(function (){
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/email', [AuthController::class, 'verifyEmail']);
+});
+
+Route::prefix('/demand')->group(function(){
+    Route::post('/new', [DemandController::class, 'store']);
+    Route::post('/update', [DemandController::class, 'update']);
+    Route::delete('/destroy', [DemandController::class, 'destroy']);
+});
+
+Route::prefix('/application')->group(function(){
+    Route::post('/new', [DemandController::class, 'store']);
+    Route::post('/update', [DemandController::class, 'update']);
+    Route::delete('/destroy', [DemandController::class, 'destroy']);
 });

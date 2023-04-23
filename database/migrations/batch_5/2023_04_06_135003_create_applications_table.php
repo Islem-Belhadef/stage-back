@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('offer_id')->constrained('internship_offers')->onUpdate('cascade')->onDelete('cascade');
             $table->date('date');
-            $table->string('status');
+            $table->tinyInteger('status')->default(0);
             $table->text('rejection_motive')->nullable();
         });
     }

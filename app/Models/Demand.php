@@ -10,6 +10,23 @@ class Demand extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'start_date',
+        'end_date',
+        'duration',
+        'supervisor_email',
+        'date',
+        'title',
+        'student_id'
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

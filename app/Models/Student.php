@@ -13,6 +13,19 @@ class Student extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'department_id',
+        'speciality',
+        'academic_year',
+        'semester',
+        'date_of_birth'
+    ];
+
     public function applications(): HasMany
     {
         return $this->hasMany(OfferApplication::class);
