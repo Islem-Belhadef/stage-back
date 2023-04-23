@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Demand;
+use App\Models\Offer;
 use App\Models\OfferApplication;
 use Illuminate\Http\Request;
 
@@ -26,9 +28,18 @@ class OfferApplicationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Offer $offer)
     {
-        //
+        $application = OfferApplication::create([
+            'offer_id' => $offer->id,
+            'student_id' => $request->student_id,
+            'status' => 0,
+            'rejection_motive' => null,
+            'date' => $request->date,
+            'title' => $request->title,
+        ]);
+
+        return response(['application' => $application], 200);
     }
 
     /**
