@@ -7,9 +7,6 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SignupRequest;
 use App\Models\User;
 use App\Models\Student;
-use App\Models\HeadOfDepartment;
-use App\Models\Supervisor;
-use App\Models\SuperAdministrator;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
@@ -64,8 +61,6 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('authToken')->accessToken;
-
-//        auth()->login($user);
 
         return response()->json([
             'token' => $token,

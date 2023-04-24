@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evaluation;
+use App\Models\Internship;
 use Illuminate\Http\Request;
 
 class EvaluationController extends Controller
@@ -26,9 +27,18 @@ class EvaluationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Internship $internship)
     {
-        //
+        $evaluation = Evaluation::create([
+            'internship_id' => $internship->id,
+            'discipline' => $request->discipline,
+            'aptitude' => $request->aptitude,
+            'initiative' => $request->initiative,
+            'innovation' => $request->innovation,
+            'acquired_knowledge' => $request->acquiredKnowledge
+        ]);
+
+        return response()->json(['evaluation' => $evaluation], 201);
     }
 
     /**

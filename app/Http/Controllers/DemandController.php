@@ -31,7 +31,7 @@ class DemandController extends Controller
      * Store a newly created resource in storage.
      * @throws ValidationException
      */
-    public function store(Request $request): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
 
 //        $this->validate($request, [
@@ -67,12 +67,12 @@ class DemandController extends Controller
                 'role' => 2
             ]);
 
-            return response(["demand" => $demand, "user" => $usr], 200);
+            return response()->json(["demand" => $demand, "user" => $usr], 201);
         }
 
 //        Send email with account information to the supervisorF
 
-        return response(["demand" => $demand, "user" => $user], 200);
+        return response()->json(["demand" => $demand, "user" => $user], 201);
     }
 
     /**
@@ -94,23 +94,23 @@ class DemandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Demand $demand)
+    public function update(Request $request, Demand $internshipDemand): \Illuminate\Http\JsonResponse
     {
-        $dem = Demand::find($demand->id);
-        $dem->status = $request->status;
-        $dem->save();
+        $demand = Demand::find($internshipDemand->id);
+        $demand->status = $request->status;
+        $demand->save();
 
-        return response($dem, 200);
+        return response()->json(['demand' => $demand]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Demand $demand)
+    public function destroy(Demand $internshipDemand): \Illuminate\Http\JsonResponse
     {
-        $dem = Demand::find($demand->id);
-        $dem->delete();
+        $demand = Demand::find($internshipDemand->id);
+        $demand->delete();
 
-        return response("Demand deleted", 200);
+        return response()->json("Demand deleted");
     }
 }

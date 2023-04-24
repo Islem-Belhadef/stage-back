@@ -26,6 +26,8 @@ Route::prefix('/auth')->group(function () {
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/email', [AuthController::class, 'verifyEmail']);
+    Route::post('/password/forgot', [AuthController::class, 'sendPasswordResetLink']);
+    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 });
 
 Route::prefix('/demand')->group(function () {

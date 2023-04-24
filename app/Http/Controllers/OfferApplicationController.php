@@ -28,7 +28,7 @@ class OfferApplicationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Offer $offer)
+    public function store(Request $request, Offer $offer): \Illuminate\Http\JsonResponse
     {
         $application = OfferApplication::create([
             'offer_id' => $offer->id,
@@ -36,10 +36,9 @@ class OfferApplicationController extends Controller
             'status' => 0,
             'rejection_motive' => null,
             'date' => $request->date,
-            'title' => $request->title,
         ]);
 
-        return response(['application' => $application], 200);
+        return response()->json(['application' => $application], 201);
     }
 
     /**
@@ -61,16 +60,23 @@ class OfferApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, OfferApplication $offerApplication)
+    public function update(Request $request, OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
     {
-        //
+        $application = OfferApplication::find($offerApplication->id);
+        $application->status = $request->status;
+        $application->save();
+
+        return response()->json(['application' => $application]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OfferApplication $offerApplication)
+    public function destroy(OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
     {
-        //
+        $application = Demand::find($offerApplication->id);
+        $application->delete();
+
+        return response()->json("Application deleted");
     }
 }
