@@ -50,29 +50,30 @@ class DemandController extends Controller
             'supervisor_email' => $request->supervisor_email,
             'status' => 0,
             'rejection_motive' => null,
-            'date' => $request->date,
             'title' => $request->title,
         ]);
 
-        $user = User::find('email', $request->supervisor_email);
 
-        $pwd = Str::random(12);
+        if (!User::where('email', $request->supervisor_email)->exists()) {
+            $password = Str::random(12);
 
-        if (!$user) {
-            $usr = User::create([
+            $user = User::create([
                 'email' => $demand->supervisor_email,
-                'password' => bcrypt($pwd),
-                'first_name' => null,
-                'last_name' => null,
+                'password' => bcrypt($password),
+                'first_name' => '',
+                'last_name' => '',
                 'role' => 2
             ]);
 
-            return response()->json(["demand" => $demand, "user" => $usr], 201);
+//          Send email with account information to the supervisor
+
+            return response()->json(["message" => "no user found", "demand" => $demand, "user" => $user, "password" => $password], 201);
         }
 
-//        Send email with account information to the supervisorF
 
-        return response()->json(["demand" => $demand, "user" => $user], 201);
+        $user = User::where('email', $request->supervisor_email)->first();
+
+        return response()->json(["message" => "user exists", "demand" => $demand, "user" => $user], 201);
     }
 
     /**
