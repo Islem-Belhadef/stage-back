@@ -21,8 +21,9 @@ class Student extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'department_id',
-        'speciality',
+        'speciality_id',
         'academic_year',
         'semester',
         'date_of_birth'

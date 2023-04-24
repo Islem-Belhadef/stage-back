@@ -53,7 +53,7 @@ class AuthController extends Controller
 
         $student = Student::create([
             'department_id' => $request->department_id,
-            'speciality' => $request->speciality,
+            'speciality_id' => $request->speciality_id,
             'semester' => $request->semester,
             'academic_year' => $request->academic_year,
             'date_of_birth' => $request->date_of_birth,
