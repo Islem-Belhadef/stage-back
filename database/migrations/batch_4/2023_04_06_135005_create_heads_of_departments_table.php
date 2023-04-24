@@ -15,8 +15,8 @@ return new class extends Migration
 
         Schema::create('heads_of_departments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('department_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::enableForeignKeyConstraints();

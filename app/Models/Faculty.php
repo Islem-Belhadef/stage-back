@@ -11,6 +11,8 @@ class Faculty extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function university(): BelongsTo
     {
         return $this->belongsTo(University::class);

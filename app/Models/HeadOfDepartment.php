@@ -12,6 +12,7 @@ class HeadOfDepartment extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
 
     public function department(): BelongsTo
     {

@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('super_administrators', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::enableForeignKeyConstraints();

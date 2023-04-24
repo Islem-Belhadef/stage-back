@@ -10,6 +10,8 @@ class University extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function faculties(): HasMany
     {
         return $this->hasMany(Faculty::class);

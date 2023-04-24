@@ -12,6 +12,8 @@ class Internship extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);

@@ -13,6 +13,8 @@ class Supervisor extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function offers(): HasMany
     {
         return $this->hasMany(Offer::class);

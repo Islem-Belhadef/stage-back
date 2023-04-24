@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('demands', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('supervisor_email');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration');
             $table->tinyInteger('status')->default(0);
-            $table->date('date');
             $table->text('rejection_motive')->nullable();
             $table->string('title');
+            $table->timestamps();
+
         });
     }
 

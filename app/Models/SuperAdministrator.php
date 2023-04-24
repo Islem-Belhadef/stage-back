@@ -10,4 +10,6 @@ use Laravel\Sanctum\HasApiTokens;
 class SuperAdministrator extends Model
 {
     use HasFactory;
+
+    public $timestamps = false;
 }

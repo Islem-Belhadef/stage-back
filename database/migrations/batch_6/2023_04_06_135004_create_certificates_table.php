@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('internship_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('internship_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::enableForeignKeyConstraints();

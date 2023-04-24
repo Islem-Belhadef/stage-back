@@ -10,6 +10,8 @@ class Company extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function supervisors(): HasMany
     {
         return $this->hasMany(Supervisor::class);
