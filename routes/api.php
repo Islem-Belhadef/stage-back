@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Auth routes
 Route::prefix('/auth')->group(function () {
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/login', [AuthController::class, 'login']);
@@ -30,19 +31,23 @@ Route::prefix('/auth')->group(function () {
     Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 });
 
-Route::prefix('/demand')->group(function () {
-    Route::post('/new', [DemandController::class, 'store']);
+// Internship demands routes
+Route::prefix('/demand')->middleware('auth:sanctum')->group(function () {
+    Route::post('/new', [DemandController::class, 'store'])->middleware('auth:sanctum');
     Route::post('/update', [DemandController::class, 'update']);
     Route::delete('/destroy', [DemandController::class, 'destroy']);
 });
 
-Route::prefix('/application')->group(function () {
+// Offer applications routes
+Route::prefix('/application')->middleware('auth:sanctum')->group(function () {
     Route::post('/new', [OfferApplication::class, 'store']);
     Route::post('/update', [OfferApplication::class, 'update']);
     Route::delete('/destroy', [OfferApplication::class, 'destroy']);
 });
 
-Route::prefix('/offer')->group(function () {
+// Offers routes
+Route::prefix('/offer')->middleware('auth:sanctum')->group(function () {
     Route::post('/new', [Offer::class, 'store']);
+    Route::post('/update', [Offer::class, 'update']);
     Route::post('/destroy', [Offer::class, 'destroy']);
 });

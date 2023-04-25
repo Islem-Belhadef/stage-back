@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Demand;
+use App\Models\Internship;
 use App\Models\Offer;
 use App\Models\OfferApplication;
 use Illuminate\Http\Request;
@@ -63,8 +63,30 @@ class OfferApplicationController extends Controller
     public function update(Request $request, OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
     {
         $application = OfferApplication::find($offerApplication->id);
+
+        // status:2,4 => rejected
+        if ($request->status == 2 or $request->status == 4) {
+            $application->rejection_motive = $request->rejection_motive;
+            $application->status = $request->status;
+            $application->save();
+            return response()->json(['application' => $application]);
+        }
+
         $application->status = $request->status;
         $application->save();
+
+        // status:3 => accepted by HOD and supervisor
+        if ($request->status == 3) {
+            $internship = Internship::create([
+                'student_id' => $request->student_id,
+                'supervisor_id' => $request->supervisor_id,
+                'start_date' => $offerApplication->start_date,
+                'end_date' => $offerApplication->end_date,
+                'duration' => $offerApplication->duration,
+                'title' => $offerApplication->title
+            ]);
+            return response()->json(['application' => $application, 'internship' => $internship]);
+        }
 
         return response()->json(['application' => $application]);
     }
@@ -74,9 +96,13 @@ class OfferApplicationController extends Controller
      */
     public function destroy(OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
     {
-        $application = Demand::find($offerApplication->id);
+        if (!$offerApplication->status == 0 or !$offerApplication->status == 2 or !$offerApplication->status == 4) {
+            return response()->json(['message' => "Offer application has already been accepted, you can't remove it"]);
+        }
+
+        $application = OfferApplication::find($offerApplication->id);
         $application->delete();
 
-        return response()->json("Application deleted");
+        return response()->json(['message' => "Application deleted"]);
     }
 }

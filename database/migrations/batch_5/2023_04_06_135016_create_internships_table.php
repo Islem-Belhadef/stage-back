@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('supervisor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('title');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration');
