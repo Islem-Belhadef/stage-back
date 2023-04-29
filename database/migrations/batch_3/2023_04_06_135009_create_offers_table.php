@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('internship_offers', function (Blueprint $table) {
+        Schema::create('offers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('internship_supervisor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('start_date');

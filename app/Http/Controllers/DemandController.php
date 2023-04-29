@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Demand;
 use App\Models\Internship;
+use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -65,9 +66,14 @@ class DemandController extends Controller
                 'role' => 2
             ]);
 
+            $supervisor = Supervisor::create([
+                'user_id' => $user->id,
+                'company_id' => $user->null,
+            ]);
+
 //          Send email with account information to the supervisor
 
-            return response()->json(["message" => "no user found", "demand" => $demand, "user" => $user, "password" => $password], 201);
+            return response()->json(["message" => "no user found", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password], 201);
         }
 
 

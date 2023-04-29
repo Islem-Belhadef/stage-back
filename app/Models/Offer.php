@@ -10,6 +10,18 @@ class Offer extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'internship_supervisor_id',
+        'start_date',
+        'end_date',
+        'duration',
+        'available_spots',
+        'title',
+        'description',
+    ];
+
     public function supervisor(): BelongsTo
     {
         return $this->belongsTo(Supervisor::class);

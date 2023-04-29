@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DemandController;
+use App\Http\Controllers\OfferApplicationController;
+use App\Http\Controllers\OfferController;
 use App\Models\Evaluation;
 use App\Models\Offer;
 use App\Models\OfferApplication;
@@ -34,27 +36,30 @@ Route::prefix('/auth')->group(function () {
 });
 
 // Internship demands routes
-Route::prefix('/demand')->middleware('auth:sanctum')->group(function () {
+Route::prefix('/demands')->middleware('auth:sanctum')->group(function () {
     Route::post('/new', [DemandController::class, 'store'])->middleware('auth:sanctum');
     Route::post('/update', [DemandController::class, 'update']);
     Route::delete('/destroy', [DemandController::class, 'destroy']);
 });
 
 // Offer applications routes
-Route::prefix('/application')->middleware('auth:sanctum')->group(function () {
-    Route::post('/new', [OfferApplication::class, 'store']);
-    Route::post('/update', [OfferApplication::class, 'update']);
-    Route::delete('/destroy', [OfferApplication::class, 'destroy']);
+Route::prefix('/applications')->middleware('auth:sanctum')->group(function () {
+    Route::post('/new', [OfferApplicationController::class, 'store']);
+    Route::post('/update', [OfferApplicationController::class, 'update']);
+    Route::delete('/destroy', [OfferApplicationController::class, 'destroy']);
 });
 
 // Offers routes
-Route::prefix('/offer')->middleware('auth:sanctum')->group(function () {
-    Route::post('/new', [Offer::class, 'store']);
-    Route::post('/update', [Offer::class, 'update']);
-    Route::post('/destroy', [Offer::class, 'destroy']);
+Route::prefix('/offers')->group(function () {
+    Route::get('/', [OfferController::class, 'index']);
+    Route::get('/{id}', [OfferController::class, 'show']);
+    Route::post('/new', [OfferController::class, 'store'])->middleware('auth:sanctum');
+    Route::post('/update', [OfferController::class, 'update'])->middleware('auth:sanctum');
+    Route::post('/destroy', [OfferController::class, 'destroy'])->middleware('auth:sanctum');
 });
 
-Route::prefix('/internship')->group(function(){
+// Internship routes
+Route::prefix('/internships')->group(function(){
    Route::post('/evaluate', [Evaluation::class, 'store']);
    Route::post('/presence', [Presence::class, 'store']);
 });
