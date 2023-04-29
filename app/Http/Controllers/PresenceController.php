@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Internship;
 use App\Models\Presence;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,12 @@ class PresenceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Internship $internship)
     {
-        //
+        $presence = Presence::create([
+            'internship_id' => $internship->id,
+            'presence' => $request->presence,
+        ]);
     }
 
     /**

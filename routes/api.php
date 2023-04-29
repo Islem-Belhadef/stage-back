@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DemandController;
+use App\Models\Evaluation;
 use App\Models\Offer;
 use App\Models\OfferApplication;
+use App\Models\Presence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -50,4 +52,9 @@ Route::prefix('/offer')->middleware('auth:sanctum')->group(function () {
     Route::post('/new', [Offer::class, 'store']);
     Route::post('/update', [Offer::class, 'update']);
     Route::post('/destroy', [Offer::class, 'destroy']);
+});
+
+Route::prefix('/internship')->group(function(){
+   Route::post('/evaluate', [Evaluation::class, 'store']);
+   Route::post('/presence', [Presence::class, 'store']);
 });
