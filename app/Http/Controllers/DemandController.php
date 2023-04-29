@@ -103,7 +103,7 @@ class DemandController extends Controller
      */
     public function update(Request $request, Demand $internshipDemand): \Illuminate\Http\JsonResponse
     {
-        $demand = Demand::find($internshipDemand->id);
+        $demand = Demand::findOrFail($internshipDemand->id);
 
         // status:2,4 => rejected
         if ($request->status == 2 or $request->status == 4) {

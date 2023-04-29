@@ -74,7 +74,9 @@ class OfferController extends Controller
      */
     public function update(Request $request, Offer $offer)
     {
-        //
+        $offer = Offer::findOrFail($offer->id);
+        $offer->available_spots--;
+        $offer->save();
     }
 
     /**
