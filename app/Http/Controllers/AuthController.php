@@ -5,21 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\SignupRequest;
+use App\Mail\ConfirmEmail;
 use App\Models\User;
 use App\Models\Student;
+use App\Models\VerificationCode;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     /**
      * Log in the user and generate a JWT token.
      *
-     * @param  LoginRequest  $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
     public function login(LoginRequest $request): JsonResponse
@@ -60,12 +64,27 @@ class AuthController extends Controller
             'user_id' => $user->id
         ]);
 
+        // Random 6 characters code to verify email address
+        $code = '';
+
+        for ($i = 0; $i <6; $i++) {
+            $code = $code . strval(rand(0, 9));
+        }
+
+        $verification = VerificationCode::create([
+            'user_id' => $user->id,
+            'code' => $code
+        ]);
+
+        Mail::to($request->email)->send(new ConfirmEmail($code));
+
         $token = $user->createToken('access_token')->plainTextToken;
 
         return response()->json([
             'token' => $token,
             'user' => $user,
             'student' => $student,
+            'verification' => $verification
         ], 201);
     }
 
@@ -73,12 +92,20 @@ class AuthController extends Controller
     /**
      * Verify the user's email address.
      *
-     * @param  EmailVerificationRequest  $request
+     * @param EmailVerificationRequest $request
      * @return JsonResponse
      */
-    public function verifyEmail(EmailVerificationRequest $request): JsonResponse
+    public function verifyEmail(Request $request): JsonResponse
     {
-        $request->fulfill();
+        $code = VerificationCode::where('user_id', $request->user_id)->first();
+
+        if ($code->code != $request->code) {
+            return response()->json(['error' => 'Invalid verification code please try again']);
+        }
+
+        $user = User::findOrFail($request->user_id);
+        $user->email_verified_at = date("Y-m-d h:i:sa");
+        $user->save();
 
         return response()->json(['message' => 'Email verified successfully']);
     }
@@ -86,7 +113,7 @@ class AuthController extends Controller
     /**
      * Send a password reset link to the user.
      *
-     * @param  LoginRequest  $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
     public function sendPasswordResetLink(LoginRequest $request): JsonResponse
@@ -105,7 +132,7 @@ class AuthController extends Controller
     /**
      * Reset the user's password.
      *
-     * @param  ResetPasswordRequest  $request
+     * @param ResetPasswordRequest $request
      * @return JsonResponse
      */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse

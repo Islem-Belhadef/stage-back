@@ -5,8 +5,6 @@ use App\Http\Controllers\DemandController;
 use App\Http\Controllers\OfferApplicationController;
 use App\Http\Controllers\OfferController;
 use App\Models\Evaluation;
-use App\Models\Offer;
-use App\Models\OfferApplication;
 use App\Models\Presence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
