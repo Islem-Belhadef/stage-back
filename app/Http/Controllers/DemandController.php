@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AccountCreated;
 use App\Models\Demand;
 use App\Models\Internship;
 use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -71,15 +73,14 @@ class DemandController extends Controller
                 'company_id' => $user->null,
             ]);
 
-//          Send email with account information to the supervisor
+            Mail::to($demand->supervisor_email)->send(new AccountCreated($demand->supervisor_email, $password));
 
             return response()->json(["message" => "no user found", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password], 201);
         }
 
-
         $user = User::where('email', $request->supervisor_email)->first();
 
-        return response()->json(["message" => "user exists", "demand" => $demand, "user" => $user], 201);
+        return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user], 201);
     }
 
     /**

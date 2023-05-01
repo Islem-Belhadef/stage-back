@@ -37,7 +37,7 @@ Route::prefix('/auth')->group(function () {
 
 // Internship demands routes
 Route::prefix('/demands')->middleware('auth:sanctum')->group(function () {
-    Route::post('/new', [DemandController::class, 'store'])->middleware('auth:sanctum');
+    Route::post('/new', [DemandController::class, 'store']);
     Route::post('/update', [DemandController::class, 'update']);
     Route::delete('/destroy', [DemandController::class, 'destroy']);
 });
