@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use App\Models\Supervisor;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
@@ -10,8 +11,14 @@ class OfferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(int $supervisor_id): \Illuminate\Http\JsonResponse
     {
+        if ($supervisor_id) {
+            $supervisor = Supervisor::findOrFail($supervisor_id);
+            $offers = $supervisor->offers();
+            return response()->json(['offers' => $offers]);
+        }
+
         $offers = Offer::all()->sortDesc();
         return response()->json(['offers' => $offers]);
     }

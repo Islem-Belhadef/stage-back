@@ -17,9 +17,17 @@ class DemandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(int $supervisor_id)
     {
-        //
+        if ($supervisor_id) {
+            $supervisor = Supervisor::findOrFail($supervisor_id);
+            $email = User::findOrFail($supervisor->id)->first()->email;
+            $demands = Demand::where('supervisor_email', $email, 'status', 1)->get();
+            return response()->json(['demands' => $demands]);
+        }
+
+        $demands = Demand::where('status', 0)->get();
+        return response()->json(['demands' => $demands]);
     }
 
     /**

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DemandController;
 use App\Http\Controllers\OfferApplicationController;
 use App\Http\Controllers\OfferController;
+use App\Models\Certificate;
 use App\Models\Evaluation;
 use App\Models\Presence;
 use Illuminate\Http\Request;
@@ -25,39 +26,40 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Auth routes
-Route::prefix('/auth')->group(function () {
-    Route::post('/signup', [AuthController::class, 'signup']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/email', [AuthController::class, 'verifyEmail']);
-    Route::post('/password/forgot', [AuthController::class, 'sendPasswordResetLink']);
-    Route::post('/password/reset', [AuthController::class, 'resetPassword']);
+Route::prefix('/auth')->controller(AuthController::class)->group(function () {
+    Route::post('/signup', 'signup');
+    Route::post('/login', 'login');
+    Route::post('/email', 'verifyEmail');
+    Route::post('/password/forgot', 'sendPasswordResetLink');
+    Route::post('/password/reset', 'resetPassword');
 });
 
 // Internship demands routes
-Route::prefix('/demands')->middleware('auth:sanctum')->group(function () {
-    Route::post('/new', [DemandController::class, 'store']);
-    Route::post('/update', [DemandController::class, 'update']);
-    Route::delete('/destroy', [DemandController::class, 'destroy']);
+Route::prefix('/demands')->controller(DemandController::class)->middleware('auth:sanctum')->group(function () {
+    Route::post('/new', 'store');
+    Route::post('/update', 'update');
+    Route::delete('/destroy', 'destroy');
 });
 
 // Offer applications routes
-Route::prefix('/applications')->middleware('auth:sanctum')->group(function () {
-    Route::post('/new', [OfferApplicationController::class, 'store']);
-    Route::post('/update', [OfferApplicationController::class, 'update']);
-    Route::delete('/destroy', [OfferApplicationController::class, 'destroy']);
+Route::prefix('/applications')->controller(OfferApplicationController::class)->middleware('auth:sanctum')->group(function () {
+    Route::post('/new','store');
+    Route::post('/update','update');
+    Route::delete('/destroy','destroy');
 });
 
 // Offers routes
-Route::prefix('/offers')->group(function () {
-    Route::get('/', [OfferController::class, 'index']);
-    Route::get('/{id}', [OfferController::class, 'show']);
-    Route::post('/new', [OfferController::class, 'store'])->middleware('auth:sanctum');
-    Route::post('/update', [OfferController::class, 'update'])->middleware('auth:sanctum');
-    Route::post('/destroy', [OfferController::class, 'destroy'])->middleware('auth:sanctum');
+Route::prefix('/offers')->controller(OfferController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/{id}', 'show');
+    Route::post('/new', 'store')->middleware('auth:sanctum');
+    Route::post('/update', 'update')->middleware('auth:sanctum');
+    Route::post('/destroy', 'destroy')->middleware('auth:sanctum');
 });
 
 // Internship routes
-Route::prefix('/internships')->group(function(){
-   Route::post('/evaluate', [Evaluation::class, 'store']);
-   Route::post('/presence', [Presence::class, 'store']);
+Route::prefix('/internships')->group(function () {
+    Route::post('/evaluate', [Evaluation::class, 'store']);
+    Route::post('/presence', [Presence::class, 'store']);
+    Route::post('/certificate', [Certificate::class, 'store']);
 });

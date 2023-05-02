@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Internship;
 use App\Models\Offer;
 use App\Models\OfferApplication;
+use App\Models\Supervisor;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class OfferApplicationController extends Controller
@@ -12,9 +14,21 @@ class OfferApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(int $supervisor_id)
     {
-        //
+        if ($supervisor_id) {
+            $supervisor = Supervisor::findOrFail($supervisor_id);
+            $offers = $supervisor->offers();
+            $applications = [];
+            for ($i = 0; $i < count($offers); $i++) {
+                $application = OfferApplication::where('offer_id', $offers[$i]['id'])->first();
+                $applications[] = $application;
+            }
+            return response()->json(['applications' => $applications]);
+        }
+
+        $applications = OfferApplication::where('status', 0)->get();
+        return response()->json(['applications' => $applications]);
     }
 
     /**
