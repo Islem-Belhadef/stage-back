@@ -11,7 +11,7 @@
 <body style="font-family: 'Inter', sans-serif;font-size: 0.95rem;">
 <div class="container">
     <div class="title" style="display: flex;gap: 20px;align-items: center;font-family: 'Nunito',sans-serif;font-weight: 600;color: #272937;">
-        <img src="{{ URL::to('logo.svg') }}" alt="Logo" height="40" width="40"/>
+        <img src="/assets/logo.svg" alt="Logo" height="40" width="40"/>
         <h2>Supervisor account</h2>
     </div>
     <div class="content">
