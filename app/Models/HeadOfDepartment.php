@@ -14,6 +14,11 @@ class HeadOfDepartment extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'department_id',
+        'user_id'
+    ];
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);

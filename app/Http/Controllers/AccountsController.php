@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SignupRequest;
+use App\Mail\AccountCreated;
 use App\Models\HeadOfDepartment;
 use App\Models\Student;
 use App\Models\SuperAdministrator;
 use App\Models\Supervisor;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AccountsController extends Controller
 {
@@ -30,19 +34,23 @@ class AccountsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        $password = Str::random(12);
+        $type = 'super administrator';
+
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => bcrypt($password),
             'role' => $request->role
         ]);
 
         if ($request->role == 0) {
 
-            $student = Student::create([
+            $type = 'student';
+            Student::create([
                 'department_id' => $request->department_id,
                 'speciality_id' => $request->speciality_id,
                 'semester' => $request->semester,
@@ -51,44 +59,33 @@ class AccountsController extends Controller
                 'user_id' => $user->id
             ]);
 
-            return response()->json(['user' => $user, 'student' => $student]);
         } else if ($request->role == 1) {
 
-            $hod = HeadOfDepartment::create([
+            $type = 'head of department';
+            HeadOfDepartment::create([
                 'department_id' => $request->department_id,
-                'speciality_id' => $request->speciality_id,
-                'semester' => $request->semester,
-                'academic_year' => $request->academic_year,
-                'date_of_birth' => $request->date_of_birth,
                 'user_id' => $user->id
             ]);
-
-            return response()->json(['user' => $user, 'hod' => $hod]);
 
         } else if ($request->role == 2) {
 
-            $supervisor = Supervisor::create([
-                'department_id' => $request->department_id,
-                'speciality_id' => $request->speciality_id,
-                'semester' => $request->semester,
-                'academic_year' => $request->academic_year,
-                'date_of_birth' => $request->date_of_birth,
+            $type = 'supervisor';
+            Supervisor::create([
+                'company_id' => $request->company_id,
                 'user_id' => $user->id
             ]);
 
-            return response()->json(['user' => $user, 'student' => $supervisor]);
+        } else {
+
+            SuperAdministrator::create([
+                'user_id' => $user->id
+            ]);
 
         }
-        $superAdmin = SuperAdministrator::create([
-            'department_id' => $request->department_id,
-            'speciality_id' => $request->speciality_id,
-            'semester' => $request->semester,
-            'academic_year' => $request->academic_year,
-            'date_of_birth' => $request->date_of_birth,
-            'user_id' => $user->id
-        ]);
 
-        return response()->json(['user' => $user, 'student' => $superAdmin]);
+        Mail::to($request->email)->send(new AccountCreated($type, $request->email, $password));
+
+        return response()->json(['message'=>'User account created and email sent successfully', 'user' => $user, 'type' => $type]);
     }
 
     /**
@@ -118,16 +115,11 @@ class AccountsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request,string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        if ($request->role == 0) {
-            $student = Student::findOrFail($id);
-        }
-        if ($request->role == 1) {
-            $hod = HeadOfDepartment::findOrFail($id);
-        }
-        if ($request->role == 2) {
-            $supervisor = Supervisor::findOrFail($id);
-        }
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message'=>'User deleted successfully']);
     }
 }

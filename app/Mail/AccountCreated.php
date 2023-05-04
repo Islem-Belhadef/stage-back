@@ -16,8 +16,9 @@ class AccountCreated extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($address, $password)
+    public function __construct($type, $address, $password)
     {
+        $this->type = $type;
         $this->address = $address;
         $this->password = $password;
     }
@@ -37,13 +38,13 @@ class AccountCreated extends Mailable
      */
     public function content(): Content
     {
-
+        $type = $this->type;
         $address = $this->address;
         $password = $this->password;
 
         return new Content(
             view: 'emails.accountCreated',
-            with: ['address' => $address, 'password' => $password]
+            with: ['type' => $type, 'address' => $address, 'password' => $password]
         );
     }
 

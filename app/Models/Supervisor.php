@@ -14,6 +14,7 @@ class Supervisor extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'company_id',
         'user_id'
     ];
 

@@ -81,14 +81,14 @@ class DemandController extends Controller
                 'company_id' => $user->null,
             ]);
 
-            Mail::to($demand->supervisor_email)->send(new AccountCreated($demand->supervisor_email, $password));
+            Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
 
-            return response()->json(["message" => "no user found", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password], 201);
+            return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password], 201);
         }
 
         $user = User::where('email', $request->supervisor_email)->first();
 
-        return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user], 201);
+        return response()->json(["message" => "supervisor account exists demand created successfully", "demand" => $demand, "user" => $user], 201);
     }
 
     /**

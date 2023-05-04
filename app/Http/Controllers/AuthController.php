@@ -90,6 +90,17 @@ class AuthController extends Controller
 
 
     /**
+     * Logout from the account
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request){
+        $request->user()->token()->revoke();
+
+        return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
      * Verify the user's email address.
      *
      * @param EmailVerificationRequest $request
