@@ -42,7 +42,7 @@ Route::prefix('/auth')->controller(AuthController::class)->group(function () {
 Route::prefix('/demands')->controller(DemandController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
-    Route::post('/new', 'store');
+    Route::post('/new', 'store')->middleware('verified');
     Route::put('/update/{id}', 'update');
     Route::delete('/destroy/{id}', 'destroy');
 });

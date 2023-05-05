@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AccountCreated;
+use App\Mail\ConfirmEmail;
 use App\Models\Demand;
 use App\Models\Internship;
 use App\Models\Supervisor;
 use App\Models\User;
+use App\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -81,9 +83,23 @@ class DemandController extends Controller
                 'company_id' => $user->null,
             ]);
 
+            // Random 6 characters code to verify email address
+            $code = '';
+
+            for ($i = 0; $i < 6; $i++) {
+                $code = $code . strval(rand(0, 9));
+            }
+
+            $verification = VerificationCode::create([
+                'user_id' => $user->id,
+                'code' => $code
+            ]);
+
             Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
 
-            return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password], 201);
+            Mail::to($demand->supervisor_email)->send(new ConfirmEmail($code));
+
+            return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password, 'verification' => $verification], 201);
         }
 
         $user = User::where('email', $request->supervisor_email)->first();

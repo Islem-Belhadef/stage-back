@@ -28,8 +28,10 @@ class AccountCreated extends Mailable
      */
     public function envelope(): Envelope
     {
+        $type = $this->type;
+
         return new Envelope(
-            subject: 'Supervisor Account Created',
+            subject: ucfirst($type).' Account Created',
         );
     }
 
