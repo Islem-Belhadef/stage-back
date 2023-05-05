@@ -10,9 +10,15 @@ class InternshipController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($id): \Illuminate\Http\JsonResponse
     {
-        //
+        if ($id) {
+            $internships = Internship::where('supervisor_id', $id)->get();
+            return response()->json(compact('internships'));
+        }
+
+        $internships = Internship::all();
+        return response()->json(compact('internships'));
     }
 
     /**
@@ -34,9 +40,10 @@ class InternshipController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Internship $internship)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
-        //
+        $internship = Internship::findOrFail($id);
+        return response()->json(compact('internship'));
     }
 
     /**

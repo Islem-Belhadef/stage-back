@@ -33,6 +33,7 @@ class PresenceController extends Controller
             'internship_id' => $internship->id,
             'presence' => $request->presence,
         ]);
+        return response()->json(compact('presence'), 201);
     }
 
     /**

@@ -38,7 +38,7 @@ class EvaluationController extends Controller
             'acquired_knowledge' => $request->acquiredKnowledge
         ]);
 
-        return response()->json(['evaluation' => $evaluation], 201);
+        return response()->json(compact('evaluation'), 201);
     }
 
     /**

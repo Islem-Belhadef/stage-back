@@ -10,9 +10,6 @@ use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\OfferApplicationController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PresenceController;
-use App\Models\Certificate;
-use App\Models\Evaluation;
-use App\Models\Presence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,18 +41,18 @@ Route::prefix('/auth')->controller(AuthController::class)->group(function () {
 // Internship demands routes
 Route::prefix('/demands')->controller(DemandController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
-    Route::get('/{}', 'show');
+    Route::get('/{id}', 'show');
     Route::post('/new', 'store');
-    Route::put('/update', 'update');
+    Route::put('/update/{id}', 'update');
     Route::delete('/destroy/{id}', 'destroy');
 });
 
 // Offer applications routes
 Route::prefix('/applications')->controller(OfferApplicationController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
-    Route::get('/{}', 'show');
+    Route::get('/{id}', 'show');
     Route::post('/new','store');
-    Route::put('/update','update');
+    Route::put('/update/{id}','update');
     Route::delete('/destroy/{id}','destroy');
 });
 
@@ -64,7 +61,7 @@ Route::prefix('/offers')->controller(OfferController::class)->group(function () 
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
     Route::post('/new', 'store')->middleware('auth:sanctum');
-    Route::put('/update', 'update')->middleware('auth:sanctum');
+    Route::put('/update/{id}', 'update')->middleware('auth:sanctum');
     Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum');
 });
 
@@ -77,10 +74,10 @@ Route::prefix('/internships')->group(function () {
     Route::post('/certificate', [CertificateController::class, 'store']);
 });
 
-// SuperAdmin routes
+// Super Administrator routes
 Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function(){
     Route::post('/new', 'store');
-    Route::put('/update', 'update');
+    Route::put('/update/{id}', 'update');
     Route::delete('/destroy/{id}', 'destroy');
 });
 

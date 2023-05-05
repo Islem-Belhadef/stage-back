@@ -79,9 +79,9 @@ class OfferController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Offer $offer)
+    public function update(Request $request, string $id)
     {
-        $offer = Offer::findOrFail($offer->id);
+        $offer = Offer::findOrFail($id);
         $offer->available_spots--;
         $offer->save();
     }
@@ -89,8 +89,11 @@ class OfferController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Offer $offer)
+    public function destroy(string $id)
     {
-        //
+        $offer = Offer::findOrFail($id);
+        $offer->delete();
+        $message = 'Offer deleted successfully';
+        return response()->json(compact('message'));
     }
 }

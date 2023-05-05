@@ -85,7 +85,7 @@ class AccountsController extends Controller
 
         Mail::to($request->email)->send(new AccountCreated($type, $request->email, $password));
 
-        return response()->json(['message'=>'User account created and email sent successfully', 'user' => $user, 'type' => $type]);
+        return response()->json(['message' => 'User account created and email sent successfully', 'user' => $user, 'type' => $type]);
     }
 
     /**
@@ -109,7 +109,40 @@ class AccountsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        $message = 'User information updated successfully';
+
+        if ($request->role == 0) {
+            $student = $user->student;
+            $student->department_id = $request->department_id;
+            $student->speciality_id = $request->speciality_id;
+            $student->semester = $request->semester;
+            $student->academic_year = $request->academic_year;
+            $student->date_of_birth = $request->date_of_birth;
+            $student->save();
+
+            return response()->json(compact('message', 'user', 'student'));
+        } else if ($request->role == 1) {
+            $hod = $user->hod;
+            $hod->department_id = $request->department_id;
+            $hod->save();
+
+            return response()->json(compact('message', 'user', 'hod'));
+        } else if ($request->role == 2) {
+            $supervisor = $user->supervisor;
+            $supervisor->company_id = $request->company_id;
+            $supervisor->save();
+
+            return response()->json(compact('message', 'user', 'supervisor'));
+        }
+
+        return response()->json(compact('message', 'user'));
     }
 
     /**
@@ -120,6 +153,6 @@ class AccountsController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
 
-        return response()->json(['message'=>'User deleted successfully']);
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }

@@ -23,11 +23,11 @@ class DemandController extends Controller
             $supervisor = Supervisor::findOrFail($supervisor_id);
             $email = User::findOrFail($supervisor->id)->first()->email;
             $demands = Demand::where('supervisor_email', $email, 'status', 1)->get();
-            return response()->json(['demands' => $demands]);
+            return response()->json(compact('demands'));
         }
 
         $demands = Demand::where('status', 0)->get();
-        return response()->json(['demands' => $demands]);
+        return response()->json(compact('demands'));
     }
 
     /**
@@ -94,9 +94,10 @@ class DemandController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Demand $demand)
+    public function show(string $id)
     {
-        //
+        $demand = Demand::findOrFail($id);
+        return response()->json(compact('demand'));
     }
 
     /**
@@ -110,16 +111,16 @@ class DemandController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Demand $internshipDemand): \Illuminate\Http\JsonResponse
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
-        $demand = Demand::findOrFail($internshipDemand->id);
+        $demand = Demand::findOrFail($id);
 
         // status:2,4 => rejected
         if ($request->status == 2 or $request->status == 4) {
             $demand->rejection_motive = $request->rejection_motive;
             $demand->status = $request->status;
             $demand->save();
-            return response()->json(['demand' => $demand]);
+            return response()->json(compact('demand'));
         }
 
         $demand->status = $request->status;
@@ -128,29 +129,30 @@ class DemandController extends Controller
         // status:3 => accepted by HOD and supervisor
         if ($request->status == 3) {
             $internship = Internship::create([
-                'student_id' => $request->student_id,
+                'student_id' => $demand->student_id,
                 'supervisor_id' => $request->supervisor_id,
-                'start_date' => $internshipDemand->start_date,
-                'end_date' => $internshipDemand->end_date,
-                'duration' => $internshipDemand->duration,
-                'title' => $internshipDemand->title
+                'start_date' => $demand->start_date,
+                'end_date' => $demand->end_date,
+                'duration' => $demand->duration,
+                'title' => $demand->title
             ]);
-            return response()->json(['demand' => $demand, 'internship' => $internship]);
+            return response()->json(compact('demand', 'internship'));
         }
 
-        return response()->json(['demand' => $demand]);
+        return response()->json(compact('demand'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Demand $internshipDemand): \Illuminate\Http\JsonResponse
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        if (!$internshipDemand->status == 0 or !$internshipDemand->status == 2 or !$internshipDemand->status == 4) {
+        $demand = Demand::findOrFail($id);
+
+        if ($demand->status == 1 or $demand->status == 3) {
             return response()->json(['message' => "Internship demand has already been accepted, you can't remove it"]);
         }
 
-        $demand = Demand::find($internshipDemand->id);
         $demand->delete();
 
         return response()->json(['message' => "Demand deleted"]);

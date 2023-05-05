@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Internship;
-use App\Models\Offer;
 use App\Models\OfferApplication;
 use App\Models\Supervisor;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class OfferApplicationController extends Controller
@@ -24,11 +22,11 @@ class OfferApplicationController extends Controller
                 $application = OfferApplication::where('offer_id', $offers[$i]['id'])->first();
                 $applications[] = $application;
             }
-            return response()->json(['applications' => $applications]);
+            return response()->json(compact('applications'));
         }
 
         $applications = OfferApplication::where('status', 0)->get();
-        return response()->json(['applications' => $applications]);
+        return response()->json(compact('applications'));
     }
 
     /**
@@ -42,25 +40,26 @@ class OfferApplicationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Offer $offer): \Illuminate\Http\JsonResponse
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $application = OfferApplication::create([
-            'offer_id' => $offer->id,
+            'offer_id' => $request->offer_id,
             'student_id' => $request->student_id,
             'status' => 0,
             'rejection_motive' => null,
             'date' => $request->date,
         ]);
 
-        return response()->json(['application' => $application], 201);
+        return response()->json(compact('application'), 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(OfferApplication $offerApplication)
+    public function show(OfferApplication $offerApplication, string $id)
     {
-        //
+        $application = OfferApplication::findOrFail($id);
+        return response()->json(compact('application'));
     }
 
     /**
@@ -74,9 +73,9 @@ class OfferApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
-        $application = OfferApplication::find($offerApplication->id);
+        $application = OfferApplication::findOrFail($id);
 
         // status:2,4 => rejected
         if ($request->status == 2 or $request->status == 4) {
@@ -94,27 +93,28 @@ class OfferApplicationController extends Controller
             $internship = Internship::create([
                 'student_id' => $request->student_id,
                 'supervisor_id' => $request->supervisor_id,
-                'start_date' => $offerApplication->start_date,
-                'end_date' => $offerApplication->end_date,
-                'duration' => $offerApplication->duration,
-                'title' => $offerApplication->title
+                'start_date' => $application->start_date,
+                'end_date' => $application->end_date,
+                'duration' => $application->duration,
+                'title' => $application->title
             ]);
-            return response()->json(['application' => $application, 'internship' => $internship]);
+            return response()->json(compact('application', 'internship'));
         }
 
-        return response()->json(['application' => $application]);
+        return response()->json(compact('application'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OfferApplication $offerApplication): \Illuminate\Http\JsonResponse
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        if (!$offerApplication->status == 0 or !$offerApplication->status == 2 or !$offerApplication->status == 4) {
-            return response()->json(['message' => "Offer application has already been accepted, you can't remove it"]);
+        $application = OfferApplication::findOrFail($id);
+
+        if ($application->status == 1 or $application->status == 3) {
+            return response()->json(['message' => "Application has already been accepted, you can't remove it"]);
         }
 
-        $application = OfferApplication::find($offerApplication->id);
         $application->delete();
 
         return response()->json(['message' => "Application deleted"]);
