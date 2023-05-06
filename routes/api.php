@@ -43,8 +43,8 @@ Route::prefix('/demands')->controller(DemandController::class)->middleware('auth
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
     Route::post('/new', 'store')->middleware('verified');
-    Route::put('/update/{id}', 'update');
-    Route::delete('/destroy/{id}', 'destroy');
+    Route::put('/update/{id}', 'update')->middleware('verified');
+    Route::delete('/destroy/{id}', 'destroy')->middleware('verified');
 });
 
 // Offer applications routes
@@ -60,25 +60,25 @@ Route::prefix('/applications')->controller(OfferApplicationController::class)->m
 Route::prefix('/offers')->controller(OfferController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
-    Route::post('/new', 'store')->middleware('auth:sanctum');
-    Route::put('/update/{id}', 'update')->middleware('auth:sanctum');
-    Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum');
+    Route::post('/new', 'store')->middleware('auth:sanctum', 'verified');
+    Route::put('/update/{id}', 'update')->middleware('auth:sanctum', 'verified');
+    Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum', 'verified');
 });
 
 // Internship routes
 Route::prefix('/internships')->group(function () {
     Route::get('/', [InternshipController::class,'index']);
     Route::get('/{id}', [InternshipController::class,'show']);
-    Route::post('/evaluate', [EvaluationController::class, 'store']);
-    Route::post('/presence', [PresenceController::class, 'store']);
-    Route::post('/certificate', [CertificateController::class, 'store']);
+    Route::post('/evaluate', [EvaluationController::class, 'store'])->middleware('auth:sanctum', 'verified');
+    Route::post('/presence', [PresenceController::class, 'store'])->middleware('auth:sanctum', 'verified');
+    Route::post('/certificate', [CertificateController::class, 'store'])->middleware('auth:sanctum', 'verified');
 });
 
 // Super Administrator routes
-Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function(){
-    Route::post('/new', 'store');
-    Route::put('/update/{id}', 'update');
-    Route::delete('/destroy/{id}', 'destroy');
+Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum', 'verified')->group(function(){
+    Route::post('/new', 'store')->middleware('verified');
+    Route::put('/update/{id}', 'update')->middleware('verified');
+    Route::delete('/destroy/{id}', 'destroy')->middleware('verified');
 });
 
 // Extra routes

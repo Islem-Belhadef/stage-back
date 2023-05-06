@@ -13,6 +13,10 @@ class AccountCreated extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $type;
+    private string $address;
+    private string $password;
+
     /**
      * Create a new message instance.
      */

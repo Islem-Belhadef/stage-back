@@ -5,22 +5,29 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ConfirmEmail extends Mailable
+class Certificate extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $code;
+    private string $student;
+    private string $supervisor;
+    private string $title;
+    private string $duration;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($code)
+    public function __construct($student, $supervisor, $title, $duration)
     {
-        $this->code = $code;
+        $this->student = $student;
+        $this->supervisor = $supervisor;
+        $this->title = $title;
+        $this->duration = $duration;
     }
 
     /**
@@ -29,7 +36,7 @@ class ConfirmEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Email Confirmation Code',
+            subject: 'Internship Certificate',
         );
     }
 
@@ -39,18 +46,21 @@ class ConfirmEmail extends Mailable
     public function content(): Content
     {
 
-        $code = $this->code;
+        $student = $this->student;
+        $supervisor = $this->supervisor;
+        $title = $this->title;
+        $duration = $this->duration;
 
         return new Content(
-            view: 'emails.confirmEmail',
-            with: ["code" => $code]
+            view: 'view.name',
+            with: compact('student', 'supervisor', 'title', 'duration')
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

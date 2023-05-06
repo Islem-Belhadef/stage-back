@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Certificate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CertificateController extends Controller
 {
@@ -28,7 +29,19 @@ class CertificateController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $certificate = Certificate::create([
+            'internship_id' => $request->internship_id
+        ]);
+
+        $internship = $certificate->internship;
+        $student = $internship->student;
+        $studentEmail = $student->user->email;
+
+        $department = $student->department;
+        $hod = $department->headOfDepartment;
+        $hodEmail = $hod->user->email;
+
+        Mail::to($studentEmail, $hodEmail);
     }
 
     /**
