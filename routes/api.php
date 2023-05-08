@@ -75,7 +75,7 @@ Route::prefix('/internships')->group(function () {
 });
 
 // Super Administrator routes
-Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum', 'verified')->group(function(){
+Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function(){
     Route::post('/new', 'store')->middleware('verified');
     Route::put('/update/{id}', 'update')->middleware('verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('verified');

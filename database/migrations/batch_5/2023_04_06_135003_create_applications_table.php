@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->primary(['student_id', 'offer_id']);
             $table->foreignId('student_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('offer_id')->constrained('internship_offers')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('offer_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->tinyInteger('status')->default(0);
             $table->text('rejection_motive')->nullable();
             $table->timestamps();

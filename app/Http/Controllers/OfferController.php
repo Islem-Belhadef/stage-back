@@ -51,6 +51,7 @@ class OfferController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'duration' => $request->duration,
+            'level' => $request->level,
             'available_spots' => $request->available_spots,
             'title' => $request->title,
             'description' => $request->description,
