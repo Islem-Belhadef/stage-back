@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Question;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -9,9 +10,11 @@ class ContactController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        //
+        $questions = Question::where('frequent', 1)->get();
+
+        return response()->json(compact('questions'));
     }
 
     /**
@@ -25,9 +28,19 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        //
+        $question = Question::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'subject' => $request->subject,
+            'content' => $request->question,
+            'frequent' => $request->frequent,
+            'answer' => $request->answer
+        ]);
+
+        return response()->json(compact('question'));
     }
 
     /**

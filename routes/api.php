@@ -83,3 +83,4 @@ Route::prefix('/accounts')->controller(AccountsController::class)->middleware('a
 
 // Extra routes
 Route::post('/contact', [ContactController::class, 'store']);
+Route::get('/questions', [ContactController::class, 'index']);
