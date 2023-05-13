@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SignupRequest;
 use App\Mail\AccountCreated;
+use App\Mail\ConfirmEmail;
 use App\Models\HeadOfDepartment;
 use App\Models\Student;
 use App\Models\SuperAdministrator;
 use App\Models\Supervisor;
 use App\Models\User;
+use App\Models\VerificationCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -83,9 +85,22 @@ class AccountsController extends Controller
 
         }
 
-        Mail::to($request->email)->send(new AccountCreated($type, $request->email, $password));
+        // Random 6 characters code to verify email address
+        $code = '';
 
-        return response()->json(['message' => 'User account created and email sent successfully', 'user' => $user, 'type' => $type]);
+        for ($i = 0; $i < 6; $i++) {
+            $code = $code . strval(rand(0, 9));
+        }
+
+        $verification = VerificationCode::create([
+            'user_id' => $user->id,
+            'code' => $code
+        ]);
+
+        Mail::to($request->email)->send(new AccountCreated($type, $request->email, $password));
+        Mail::to($request->email)->send(new ConfirmEmail($type, $code));
+
+        return response()->json(['message' => 'User account created and email sent successfully', 'user' => $user, 'type' => $type , 'verification' => $verification], 201);
     }
 
     /**
@@ -113,10 +128,10 @@ class AccountsController extends Controller
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->email = $request->email;
-        $user->password = bcrypt($request->password);
+        //$user->password = bcrypt($request->password);
         $user->save();
 
-        $message = 'User information updated successfully';
+       $message = 'User information updated successfully';
 
         if ($request->role == 0) {
             $student = $user->student;
@@ -142,8 +157,9 @@ class AccountsController extends Controller
             return response()->json(compact('message', 'user', 'supervisor'));
         }
 
-        return response()->json(compact('message', 'user'));
+       return response()->json(compact('message', 'user'));
     }
+    
 
     /**
      * Remove the specified resource from storage.
