@@ -10,10 +10,10 @@ class Offer extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    //public $timestamps = false;
 
     protected $fillable = [
-        'internship_supervisor_id',
+        'supervisor_id',
         'start_date',
         'end_date',
         'duration',

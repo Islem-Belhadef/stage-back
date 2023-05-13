@@ -31,7 +31,7 @@ class Supervisor extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(Internship::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function user(): BelongsTo
