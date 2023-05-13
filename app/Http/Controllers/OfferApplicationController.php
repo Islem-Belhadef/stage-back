@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Internship;
 use App\Models\OfferApplication;
 use App\Models\Supervisor;
+use App\Models\Student;
+use App\Models\Offer;
+use App\Models\HeadOfDepartment;
 use Illuminate\Http\Request;
 
 class OfferApplicationController extends Controller
@@ -12,21 +15,62 @@ class OfferApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(int $supervisor_id)
-    {
-        if ($supervisor_id) {
-            $supervisor = Supervisor::findOrFail($supervisor_id);
-            $offers = $supervisor->offers();
-            $applications = [];
-            for ($i = 0; $i < count($offers); $i++) {
-                $application = OfferApplication::where('offer_id', $offers[$i]['id'])->first();
-                $applications[] = $application;
-            }
-            return response()->json(compact('applications'));
-        }
 
-        $applications = OfferApplication::where('status', 0)->get();
-        return response()->json(compact('applications'));
+    public function index(Request $request)
+    {
+
+        $role = $request->user()['role'];
+        $id = $request->user()['id'];
+        
+        switch ($role) {
+            case 0 : {
+                $applications = OfferApplication::where('student_id', $id)->get();
+                return response()->json(compact('applications'));
+              
+
+            }
+            case 1 : {
+                $applications = OfferApplication::all();
+                $hodApplications = [];
+                foreach($applications as $application) {
+                    $student_id = $application->student_id;
+                   // $department_id = Student::find($student_id)->department_id;
+                    $department_id = Student::find($student_id)->first(['department_id'])->department_id;
+
+                   // $hod = $user->hod();
+                    //$hod_dep_id = HeadOfDepartment::where('user_id',$id)->department_id;
+                    $hod_dep_id = HeadOfDepartment::where('user_id',$id)->first(['department_id'])->department_id;
+
+                    if ($department_id == $hod_dep_id) {
+                        $hodApplications[] = $application;
+                    }
+                }
+                return response()->json(compact('hodApplications'));
+               
+
+            }
+            case 2 : {
+                
+                 $applications = OfferApplication::all();
+                 $supervisor_applications = [];
+                 foreach($applications as $application){
+                      $offer_id = $application->offer_id;
+                      $offer_supervisor = Offer::where('id',$offer_id)->first(['supervisor_id'])->supervisor_id;
+                      $supervisor_id = Supervisor::where('user_id',$id)->first(['id'])->id;
+
+                      if ($offer_supervisor == $supervisor_id) {
+                        $supervisor_applications[] = $application;
+
+                    }
+                    return response()->json(compact('supervisor_applications'));
+                    
+
+                 }
+                 
+            }
+        }
+        return response()->json(['message' => "can't fetch any applications"]);
+
     }
 
     /**
@@ -47,7 +91,6 @@ class OfferApplicationController extends Controller
             'student_id' => $request->student_id,
             'status' => 0,
             'rejection_motive' => null,
-            'date' => $request->date,
         ]);
 
         return response()->json(compact('application'), 201);
@@ -56,9 +99,9 @@ class OfferApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OfferApplication $offerApplication, string $id)
+    public function show(OfferApplication $offerApplication, string $student_id, string $offer_id)
     {
-        $application = OfferApplication::findOrFail($id);
+        $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
         return response()->json(compact('application'));
     }
 
