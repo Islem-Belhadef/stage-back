@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('internship_supervisor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('supervisor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration');

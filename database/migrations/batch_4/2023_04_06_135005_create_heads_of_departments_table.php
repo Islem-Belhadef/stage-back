@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('heads_of_departments', function (Blueprint $table) {
+        Schema::create('head_of_departments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
