@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use App\Models\Company;
 use App\Models\Supervisor;
 use Illuminate\Http\Request;
 
@@ -11,16 +12,20 @@ class OfferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(int $supervisor_id): \Illuminate\Http\JsonResponse
+    
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        if ($supervisor_id) {
-            $supervisor = Supervisor::findOrFail($supervisor_id);
-            $offers = $supervisor->offers();
-            return response()->json(['offers' => $offers]);
-        }
-
-        $offers = Offer::all()->sortDesc();
+        $offers = Offer::with('supervisor.company')->orderByDesc('created_at')->get();
+        
         return response()->json(['offers' => $offers]);
+    }
+
+
+    public function supervisorOffers(int $supervisor_id): \Illuminate\Http\JsonResponse
+    {
+        
+            $offers = Supervisor::find($supervisor_id)->offers;
+             return response()->json(['offers' => $offers]);
     }
 
     /**
@@ -37,7 +42,7 @@ class OfferController extends Controller
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->validate($request, [
-            'internship_supervisor_id' => 'required',
+            'supervisor_id' => 'required',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date',
             'duration' => 'required|integer',
@@ -47,7 +52,7 @@ class OfferController extends Controller
         ]);
 
         $offer = Offer::create([
-            'internship_supervisor_id' => $request->internship_supervisor_id,
+            'supervisor_id' => $request->supervisor_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'duration' => $request->duration,
@@ -65,7 +70,7 @@ class OfferController extends Controller
      */
     public function show(int $id): \Illuminate\Http\JsonResponse
     {
-        $offer = Offer::findOrFail($id);
+        $offer = Offer::with('supervisor.company')->findOrFail($id);
         return response()->json(['offer' => $offer]);
     }
 
