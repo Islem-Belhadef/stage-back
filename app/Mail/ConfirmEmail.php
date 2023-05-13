@@ -13,13 +13,16 @@ class ConfirmEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $type;
     private $code;
+    
 
     /**
      * Create a new message instance.
      */
-    public function __construct($code)
+    public function __construct($type,$code)
     {
+        $this->type = $type;
         $this->code = $code;
     }
 
@@ -39,11 +42,12 @@ class ConfirmEmail extends Mailable
     public function content(): Content
     {
 
-        $code = $this->code;
+        $type = $this->type;
+        $code = $this->code; 
 
         return new Content(
             view: 'emails.confirmEmail',
-            with: ["code" => $code]
+            with: ['type' => $type,"code" => $code]
         );
     }
 

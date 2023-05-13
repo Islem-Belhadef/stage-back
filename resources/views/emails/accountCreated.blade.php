@@ -7,8 +7,8 @@
 <body style="font-size: 0.95rem;">
 <div class="container">
     <div class="title" style="display: flex;gap: 20px;align-items: center;font-weight: 600;color: #272937;">
-        <img src="/public/assets/logo.svg" alt="Logo" height="40" width="40"/>
-        <h2>Supervisor account</h2>
+         <img src="/public/assets/logo.svg" alt="Logo" height="40" width="40"/>
+        <h2>{{$type}} account</h2>
     </div>
     <div class="content">
         <p style="color: #616373;">Your {{$type}} account on uc2.stage.dz was created successfully</p>

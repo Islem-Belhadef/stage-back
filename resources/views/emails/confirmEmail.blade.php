@@ -15,7 +15,7 @@
         <h2>Email Verification</h2>
     </div>
     <div class="content">
-        <p style="color: #616373;">Your student account on uc2.stage.dz was created successfully</p>
+        <p style="color: #616373;">Your {{$type}} account on uc2.stage.dz was created successfully</p>
         <p style="color: #616373;">
             Here is the one time verification code for your email, paste it to the verification form to verify your email address
         </p>
