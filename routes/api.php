@@ -36,6 +36,7 @@ Route::prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::post('/email', 'verifyEmail');
     Route::post('/password/forgot', 'sendPasswordResetLink');
     Route::post('/password/reset', 'resetPassword');
+    Route::get('/profile', 'getProfile')->middleware('auth:sanctum', 'verified');
 });
 
 // Internship demands routes
@@ -50,7 +51,7 @@ Route::prefix('/demands')->controller(DemandController::class)->middleware('auth
 // Offer applications routes
 Route::prefix('/applications')->controller(OfferApplicationController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
-    Route::get('/{id}', 'show');
+    Route::get('/{student_id}/{offer_id}', 'show');
     Route::post('/new','store');
     Route::put('/update/{id}','update');
     Route::delete('/destroy/{id}','destroy');
@@ -60,6 +61,7 @@ Route::prefix('/applications')->controller(OfferApplicationController::class)->m
 Route::prefix('/offers')->controller(OfferController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
+    Route::get('/supervisorOffers/{supervisor_id}', 'supervisorOffers')->middleware('auth:sanctum', 'verified');
     Route::post('/new', 'store')->middleware('auth:sanctum', 'verified');
     Route::put('/update/{id}', 'update')->middleware('auth:sanctum', 'verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum', 'verified');
