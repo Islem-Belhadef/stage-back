@@ -166,4 +166,37 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unable to reset password'], 500);
         }
     }
+
+
+
+    public function getProfile(Request $request){
+        $user = $request->user()['id'];
+        $role = $request->user()['role'];
+        switch ($role){
+            case 0 :{
+                // $profile = User::join('students','students.user_id','=','users.id')
+                //                 ->where('users.id',$user)
+                //                 ->get();
+
+                $profile = User::with('student')->find($user);
+              
+                return response()->json(['user' => $profile]);
+            
+            }
+            case 1 :{
+                $profile = User::with('hod')->find($user);
+                
+                 return response()->json(['user' => $profile]);
+            }
+            case 2 :{
+                $profile = User::with('supervisor')->find($user);
+                
+                 return response()->json(['user' => $profile]);
+            }
+        }
+        $profile = User::find($user);
+        
+        return response()->json(['user' => $profile]);
+
+    }
 }
