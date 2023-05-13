@@ -7,6 +7,8 @@ use App\Mail\ConfirmEmail;
 use App\Models\Demand;
 use App\Models\Internship;
 use App\Models\Supervisor;
+use App\Models\Student;
+use App\Models\HeadOfDepartment;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Http\Request;
@@ -19,17 +21,47 @@ class DemandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(int $supervisor_id)
+    public function index(Request $request)
     {
-        if ($supervisor_id) {
-            $supervisor = Supervisor::findOrFail($supervisor_id);
-            $email = User::findOrFail($supervisor->id)->first()->email;
-            $demands = Demand::where('supervisor_email', $email, 'status', 1)->get();
-            return response()->json(compact('demands'));
-        }
 
-        $demands = Demand::where('status', 0)->get();
-        return response()->json(compact('demands'));
+        $role = $request->user()['role'];
+        $id = $request->user()['id'];
+        $email = $request->user()['email'];
+        
+        switch ($role) {
+            case 0 : {
+                $demands = Demand::where('student_id', $id)->get();
+                return response()->json(compact('demands'));
+              // return response()->json(['demands for student ' => $demands]);
+
+            }
+            case 1 : {
+                $demands = Demand::all();
+                $hodDemands = [];
+                foreach($demands as $demand) {
+                    $student_id = $demand->student_id;
+                    $department_id = Student::find($student_id)->first(['department_id'])->department_id;
+                   
+                    
+                    $hod_dep_id = HeadOfDepartment::where('user_id',$id)->first(['department_id'])->department_id;
+
+                    if ($department_id == $hod_dep_id) {
+                        $hodDemands[] = $demand;
+
+                    }
+                }
+                return response()->json(compact('hodDemands'));
+              
+            }
+            case 2 : {
+                $demands = Demand::where('supervisor_email', $email)->where('status', 1)->get();
+                return response()->json(compact('demands'));
+             
+
+            }
+        }
+        return response()->json(['message' => "can't fetch any demands"]);
+
     }
 
     /**
@@ -97,7 +129,7 @@ class DemandController extends Controller
 
             Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
 
-            Mail::to($demand->supervisor_email)->send(new ConfirmEmail($code));
+            Mail::to($demand->supervisor_email)->send(new ConfirmEmail('supervisor',$code));
 
             return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password, 'verification' => $verification], 201);
         }
