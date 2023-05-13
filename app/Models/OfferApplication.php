@@ -10,6 +10,12 @@ class OfferApplication extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'student_id',
+        'offer_id',
+        'rejection_motive',
+    ];
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
