@@ -124,35 +124,58 @@ class AccountsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
-        $user->first_name = $request->first_name;
-        $user->last_name = $request->last_name;
-        $user->email = $request->email;
-        //$user->password = bcrypt($request->password);
-        $user->save();
+         $user = User::findOrFail($id);
+        // $user->first_name = $request->first_name;
+        // $user->last_name = $request->last_name;
+        // $user->email = $request->email;
+        // $user->password = bcrypt($request->password);
+        // $user->save();
+        $user->update([
+            "first_name" => ($request->first_name)?$request->first_name:$user->first_name,
+            "last_name" => ($request->last_name)?$request->last_name:$user->last_name,
+            "email" => ($request->email)?$request->email:$user->email,
+           // "password" => bcrypt($request->password)
+          
+
+        ]);
 
        $message = 'User information updated successfully';
 
         if ($request->role == 0) {
-            $student = $user->student;
-            $student->department_id = $request->department_id;
-            $student->speciality_id = $request->speciality_id;
-            $student->semester = $request->semester;
-            $student->academic_year = $request->academic_year;
-            $student->date_of_birth = $request->date_of_birth;
-            $student->save();
+            // $student = $user->student;
+            // $student->department_id = $request->department_id;
+            // $student->speciality_id = $request->speciality_id;
+            // $student->semester = $request->semester;
+            // $student->academic_year = $request->academic_year;
+            // $student->date_of_birth = $request->date_of_birth;
+            // $student->save();
+           // $student = Student::where("user_id",$id)->first();
+           $student = $user->student;
+            $student->update([
+                "department_id" =>($request->department_id)?$request->department_id:$student->department_id,
+                "speciality_id" =>($request->speciality_id)?$request->speciality_id:$student->speciality_id,
+                "semester" =>  ($request->semester)?$request->semester:$student->semester,
+                "academic_year" => ($request->academic_year)?$request->academic_year:$student->academic_year,
+                "date_of_birth" => ($request->date_of_birth)?$request->date_of_birth:$student->date_of_birth,
+            ]);
 
-            return response()->json(compact('message', 'user', 'student'));
+            return response()->json(compact('message', 'user'));
         } else if ($request->role == 1) {
             $hod = $user->hod;
-            $hod->department_id = $request->department_id;
-            $hod->save();
+            // $hod->department_id = $request->department_id;
+            // $hod->save();
+            $hod->update([
+                "department_id"=>($request->department_id)?$request->department_id:$hod->department_id,
+            ]);
 
             return response()->json(compact('message', 'user', 'hod'));
         } else if ($request->role == 2) {
             $supervisor = $user->supervisor;
-            $supervisor->company_id = $request->company_id;
-            $supervisor->save();
+            // $supervisor->company_id = $request->company_id;
+            // $supervisor->save();
+            $supervisor->update([
+                "company_id" =>($request->company_id)?$request->company_id:$supervisor->company_id,
+            ]);
 
             return response()->json(compact('message', 'user', 'supervisor'));
         }
