@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::post('/signup', 'signup');
     Route::post('/login', 'login');
-    Route::post('/logout', 'logout');
+    Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::post('/email', 'verifyEmail');
     Route::post('/password/forgot', 'sendPasswordResetLink');
     Route::post('/password/reset', 'resetPassword');
