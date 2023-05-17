@@ -24,13 +24,14 @@ class OfferApplicationController extends Controller
         
         switch ($role) {
             case 0 : {
-                $applications = OfferApplication::where('student_id', $id)->get();
+                $student_id = $request->user()->student->id;
+                $applications = OfferApplication::with('offer.supervisor.company')->where('student_id', $student_id)->get();
                 return response()->json(compact('applications'));
               
 
             }
             case 1 : {
-                $applications = OfferApplication::all();
+                $applications = OfferApplication::with('student.user','offer')->whereIn('status',[0,1,2])->get();
                 $hodApplications = [];
                 foreach($applications as $application) {
                     $student_id = $application->student_id;

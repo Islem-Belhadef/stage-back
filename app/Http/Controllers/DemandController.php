@@ -30,13 +30,16 @@ class DemandController extends Controller
         
         switch ($role) {
             case 0 : {
-                $demands = Demand::where('student_id', $id)->get();
+                $student_id = $request->user()->student->id;
+               // $student_id = Student::where('user_id',$id)->first(['id'])->id;
+            $demands = Demand::where('student_id', $student_id)->get();
                 return response()->json(compact('demands'));
               // return response()->json(['demands for student ' => $demands]);
 
             }
             case 1 : {
-                $demands = Demand::all();
+                $demands = Demand::with('student.user')->whereIn('status',[0,1,2])->get();
+                //whereIn('status',[0,2,3]) to fetch only the status the hod is concerned about pending accepted or refused by him
                 $hodDemands = [];
                 foreach($demands as $demand) {
                     $student_id = $demand->student_id;
@@ -54,7 +57,9 @@ class DemandController extends Controller
               
             }
             case 2 : {
-                $demands = Demand::where('supervisor_email', $email)->where('status', 1)->get();
+                $demands = Demand::where('supervisor_email', $email)->whereIn('status',[1,3,4])->get();
+                //whereIn('status',[1,3,4]) to fetch only the status the supervisor is concerned about pending accepted or refused by him
+
                 return response()->json(compact('demands'));
              
 
@@ -84,6 +89,7 @@ class DemandController extends Controller
             'end_date' => 'required|date',
             'duration' => 'required|integer',
             'supervisor_email' => 'required|email',
+            'company' => 'required|string',
             'title' => 'required|min:10|max:200',
         ]);
 
@@ -93,6 +99,7 @@ class DemandController extends Controller
             'end_date' => $request->end_date,
             'duration' => $request->duration,
             'supervisor_email' => $request->supervisor_email,
+            'company' => $request->company,
             'status' => 0,
             'rejection_motive' => null,
             'title' => $request->title,

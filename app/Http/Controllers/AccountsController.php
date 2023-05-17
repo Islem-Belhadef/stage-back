@@ -167,6 +167,7 @@ class AccountsController extends Controller
             $hod->update([
                 "department_id"=>($request->department_id)?$request->department_id:$hod->department_id,
             ]);
+          
 
             return response()->json(compact('message', 'user', 'hod'));
         } else if ($request->role == 2) {
