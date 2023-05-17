@@ -20,4 +20,9 @@ class OfferApplication extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function offer(): BelongsTo
+    {
+        return $this->belongsTo(Offer::class);
+    }
 }
