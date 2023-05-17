@@ -20,6 +20,7 @@ class Demand extends Model
         'end_date',
         'duration',
         'supervisor_email',
+        'company',
         'date',
         'title',
         'student_id'
