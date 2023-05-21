@@ -12,6 +12,9 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Department;
+use App\Models\Speciality;
+use App\Models\Company;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +81,7 @@ Route::prefix('/internships')->group(function () {
 
 // Super Administrator routes
 Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function(){
+    Route::get('/', 'index');
     Route::post('/new', 'store')->middleware('verified');
     Route::put('/update/{id}', 'update')->middleware('verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('verified');
@@ -86,3 +90,16 @@ Route::prefix('/accounts')->controller(AccountsController::class)->middleware('a
 // Extra routes
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/questions', [ContactController::class, 'index']);
+Route::get('/departments', function (Request $request) {
+    $departments = Department::all();
+    return response()->json(compact('departments'));
+});
+Route::get('/specialities', function (Request $request) {
+    $specialities = Speciality::all();
+    return response()->json(compact('specialities'));
+});
+Route::get('/companies', function (Request $request) {
+    $companies = Company::all();
+    return response()->json(compact('companies'));
+});
+
