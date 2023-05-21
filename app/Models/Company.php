@@ -10,6 +10,14 @@ class Company extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'company_email',
+        'address',
+        'logo_link',
+        'description',
+    ];
+
     public $timestamps = false;
 
     public function supervisors(): HasMany

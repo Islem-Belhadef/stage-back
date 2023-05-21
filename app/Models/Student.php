@@ -26,7 +26,8 @@ class Student extends Model
         'speciality_id',
         'academic_year',
         'semester',
-        'date_of_birth'
+        'date_of_birth',
+        'level'
     ];
 
     public function applications(): HasMany
