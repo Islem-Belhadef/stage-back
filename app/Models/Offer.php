@@ -19,6 +19,7 @@ class Offer extends Model
         'duration',
         'available_spots',
         'title',
+        'level',
         'description',
     ];
 

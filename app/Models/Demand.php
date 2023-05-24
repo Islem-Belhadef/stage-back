@@ -23,7 +23,8 @@ class Demand extends Model
         'company',
         'date',
         'title',
-        'student_id'
+        'student_id',
+        'motivational_letter'
     ];
 
     public function student(): BelongsTo

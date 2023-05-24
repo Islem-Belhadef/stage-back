@@ -24,8 +24,8 @@ class Department extends Model
         return $this->hasOne(HeadOfDepartment::class);
     }
 
-    public function department(): BelongsTo
+    public function faculty(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Faculty::class);
     }
 }
