@@ -27,46 +27,41 @@ class DemandController extends Controller
         $role = $request->user()['role'];
         $id = $request->user()['id'];
         $email = $request->user()['email'];
-        
+
         switch ($role) {
-            case 0 : {
-                $student_id = $request->user()->student->id;
-               // $student_id = Student::where('user_id',$id)->first(['id'])->id;
-            $demands = Demand::where('student_id', $student_id)->get();
-                return response()->json(compact('demands'));
-              // return response()->json(['demands for student ' => $demands]);
+            case 0: {
+                    $student_id = $request->user()->student->id;
+                    // $student_id = Student::where('user_id',$id)->first(['id'])->id;
+                    $demands = Demand::where('student_id', $student_id)->get();
+                    return response()->json(compact('demands'));
+                    // return response()->json(['demands for student ' => $demands]);
 
-            }
-            case 1 : {
-                $demands = Demand::with('student.user')->whereIn('status',[0,1,2])->get();
-                //whereIn('status',[0,2,3]) to fetch only the status the hod is concerned about pending accepted or refused by him
-                $hodDemands = [];
-                foreach($demands as $demand) {
-                    $student_id = $demand->student_id;
-                    $department_id = Student::find($student_id)->first(['department_id'])->department_id;
-                   
-                    
-                    $hod_dep_id = HeadOfDepartment::where('user_id',$id)->first(['department_id'])->department_id;
-
-                    if ($department_id == $hod_dep_id) {
-                        $hodDemands[] = $demand;
-
-                    }
                 }
-                return response()->json(compact('hodDemands'));
-              
-            }
-            case 2 : {
-                $demands = Demand::where('supervisor_email', $email)->whereIn('status',[1,3,4])->get();
-                //whereIn('status',[1,3,4]) to fetch only the status the supervisor is concerned about pending accepted or refused by him
+            case 1: {
+                    $demands = Demand::with('student.user')->whereIn('status', [0, 1, 2])->get();
+                    //whereIn('status',[0,2,3]) to fetch only the status the hod is concerned about pending accepted or refused by him
+                    $hodDemands = [];
+                    foreach ($demands as $demand) {
+                        $student_id = $demand->student_id;
+                        $department_id = Student::find($student_id)->first(['department_id'])->department_id;
 
-                return response()->json(compact('demands'));
-             
 
-            }
+                        $hod_dep_id = HeadOfDepartment::where('user_id', $id)->first(['department_id'])->department_id;
+
+                        if ($department_id == $hod_dep_id) {
+                            $hodDemands[] = $demand;
+                        }
+                    }
+                    return response()->json(compact('hodDemands'));
+                }
+            case 2: {
+                    $demands = Demand::where('supervisor_email', $email)->whereIn('status', [1, 3, 4])->get();
+                    //whereIn('status',[1,3,4]) to fetch only the status the supervisor is concerned about pending accepted or refused by him
+
+                    return response()->json(compact('demands'));
+                }
         }
         return response()->json(['message' => "can't fetch any demands"]);
-
     }
 
     /**
@@ -95,25 +90,12 @@ class DemandController extends Controller
 
         $student_id = $request->user()->student->id;
 
-        $demand = Demand::create([
-            'student_id' => $student_id,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
-            'supervisor_email' => $request->supervisor_email,
-            'company' => $request->company,
-            'status' => 0,
-            'rejection_motive' => null,
-            'title' => $request->title,
-            'motivational_letter' => $request->motivational_letter
-        ]);
-
 
         if (!User::where('email', $request->supervisor_email)->exists()) {
             $password = Str::random(12);
 
             $user = User::create([
-                'email' => $demand->supervisor_email,
+                'email' => $request->supervisor_email,
                 'password' => bcrypt($password),
                 'first_name' => '',
                 'last_name' => '',
@@ -122,8 +104,21 @@ class DemandController extends Controller
 
             $supervisor = Supervisor::create([
                 'user_id' => $user->id,
-                'company_id' => $user->null,
             ]);
+
+            $demand = Demand::create([
+                'student_id' => $student_id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
+                'supervisor_id' => $supervisor->id,
+                'company' => $request->company,
+                'status' => 0,
+                'rejection_motive' => null,
+                'title' => $request->title,
+                'motivational_letter' => $request->motivational_letter
+            ]);
+
 
             // Random 6 characters code to verify email address
             $code = '';
@@ -139,14 +134,41 @@ class DemandController extends Controller
 
             Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
 
-            Mail::to($demand->supervisor_email)->send(new ConfirmEmail('supervisor',$code));
+            Mail::to($demand->supervisor_email)->send(new ConfirmEmail('supervisor', $code));
 
-            return response()->json(["message" => "account created and email sent successfully", "demand" => $demand, "user" => $user, "supervisor" => $supervisor, "password" => $password, 'verification' => $verification], 201);
+            return response()->json(
+                [
+                    "message" => "account created and email sent successfully",
+                    "demand" => $demand, "user" => $user, "supervisor" => $supervisor,
+                    "password" => $password, 'verification' => $verification
+                ],
+                201
+            );
         }
 
         $user = User::where('email', $request->supervisor_email)->first();
+        $supervisor = $user->supervisor();
 
-        return response()->json(["message" => "supervisor account exists demand created successfully", "demand" => $demand, "user" => $user], 201);
+        $demand = Demand::create([
+            'student_id' => $student_id,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
+            'supervisor_id' => $supervisor->id,
+            'company' => $request->company,
+            'status' => 0,
+            'rejection_motive' => null,
+            'title' => $request->title,
+            'motivational_letter' => $request->motivational_letter
+        ]);
+
+        return response()->json(
+            [
+                "message" => "supervisor account exists demand created successfully",
+                "demand" => $demand, "user" => $user, "supervisor" => $supervisor
+            ],
+            201
+        );
     }
 
     /**

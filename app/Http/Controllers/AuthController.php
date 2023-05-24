@@ -38,7 +38,7 @@ class AuthController extends Controller
         $token = $user->createToken('access_token')->plainTextToken;
         $role = Auth::user()->role;
 
-        return response()->json(['token' => $token,'role'=>$role]);
+        return response()->json(['token' => $token, 'role' => $role]);
     }
 
     /**
@@ -56,20 +56,10 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $student = Student::create([
-            'department_id' => $request->department_id,
-            'speciality_id' => $request->speciality_id,
-            'semester' => $request->semester,
-            'level'=>$request->level,
-            'academic_year' => $request->academic_year,
-            'date_of_birth' => $request->date_of_birth,
-            'user_id' => $user->id
-        ]);
-
         // Random 6 characters code to verify email address
         $code = '';
 
-        for ($i = 0; $i <6; $i++) {
+        for ($i = 0; $i < 6; $i++) {
             $code = $code . strval(rand(0, 9));
         }
 
@@ -78,15 +68,39 @@ class AuthController extends Controller
             'code' => $code
         ]);
 
-        Mail::to($request->email)->send(new ConfirmEmail($code));
+        Mail::to($request->email)->send(new ConfirmEmail('Student', $code));
 
         $token = $user->createToken('access_token')->plainTextToken;
 
         return response()->json([
             'token' => $token,
             'user' => $user,
-            'student' => $student,
             'verification' => $verification
+        ], 201);
+    }
+
+    /**
+     * Handle creating a student request.
+     *
+     * @param SignupRequest $request
+     * @return JsonResponse
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $user_id = $request->user()->id;
+
+        $student = Student::create([
+            'department_id' => $request->department_id,
+            'speciality_id' => $request->speciality_id,
+            'semester' => $request->semester,
+            'level' => $request->level,
+            'academic_year' => $request->academic_year,
+            'date_of_birth' => $request->date_of_birth,
+            'user_id' => $user_id
+        ]);
+
+        return response()->json([
+            'student' => $student,
         ], 201);
     }
 
@@ -100,7 +114,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' =>  'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
     /**
@@ -170,30 +184,33 @@ class AuthController extends Controller
     }
 
 
-
-    public function getProfile(Request $request){
+    public function getProfile(Request $request)
+    {
         $user = $request->user()['id'];
         $role = $request->user()['role'];
-        switch ($role){
-            case 0 :{
-                $profile = User::with('student.speciality','student.department')->find($user);
+        switch ($role) {
+            case 0 :
+            {
+                $profile = User::with('student.speciality', 'student.department')->find($user);
 
                 return response()->json(['profile' => $profile]);
-            
+
             }
-            case 1 :{
+            case 1 :
+            {
                 $profile = User::with('hod.department')->find($user);
-                
-                 return response()->json(['profile' => $profile]);
+
+                return response()->json(['profile' => $profile]);
             }
-            case 2 :{
+            case 2 :
+            {
                 $profile = User::with('supervisor.company')->find($user);
-                
-                 return response()->json(['profile' => $profile]);
+
+                return response()->json(['profile' => $profile]);
             }
         }
         $profile = User::find($user);
-        
+
         return response()->json(['profile' => $profile]);
 
     }
