@@ -87,22 +87,25 @@ class DemandController extends Controller
         $this->validate($request, [
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date',
-            'duration' => 'required|integer',
             'supervisor_email' => 'required|email',
             'company' => 'required|string',
             'title' => 'required|min:10|max:200',
+            'motivational_letter' =>'nullable|string'
         ]);
 
+        $student_id = $request->user()->student->id;
+
         $demand = Demand::create([
-            'student_id' => $request->student_id,
+            'student_id' => $student_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'duration' => $request->duration,
+            'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
             'supervisor_email' => $request->supervisor_email,
             'company' => $request->company,
             'status' => 0,
             'rejection_motive' => null,
             'title' => $request->title,
+            'motivational_letter' => $request->motivational_letter
         ]);
 
 

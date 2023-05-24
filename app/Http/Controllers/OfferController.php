@@ -42,27 +42,28 @@ class OfferController extends Controller
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->validate($request, [
-            'supervisor_id' => 'required',
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date',
-            'duration' => 'required|integer',
             'available_spots' => 'required',
             'title' => 'required|min:10|max:200',
             'description' => 'required|min:10|max:3000',
+            'level'=> 'required|string'
         ]);
+        // get supervisor from the request 
+        $supervisor_id = $request->user()->supervisor->id;
 
         $offer = Offer::create([
-            'supervisor_id' => $request->supervisor_id,
+            'supervisor_id' => $supervisor_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'duration' => $request->duration,
+            'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
             'level' => $request->level,
             'available_spots' => $request->available_spots,
             'title' => $request->title,
             'description' => $request->description,
         ]);
 
-        return response()->json(['message' => 'Offer created successfully', 'offer' => $offer]);
+        return response()->json(['message' => 'Offer created successfully', 'offer' => $offer],201);
     }
 
     /**

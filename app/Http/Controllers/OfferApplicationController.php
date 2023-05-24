@@ -87,9 +87,12 @@ class OfferApplicationController extends Controller
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        // get student_id from authenticated request 
+        $student_id = $request->user()->student->id;
+        
         $application = OfferApplication::create([
             'offer_id' => $request->offer_id,
-            'student_id' => $request->student_id,
+            'student_id' => $student_id,
             'status' => 0,
             'rejection_motive' => null,
         ]);

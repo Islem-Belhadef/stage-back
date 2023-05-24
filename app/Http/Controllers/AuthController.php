@@ -60,6 +60,7 @@ class AuthController extends Controller
             'department_id' => $request->department_id,
             'speciality_id' => $request->speciality_id,
             'semester' => $request->semester,
+            'level'=>$request->level,
             'academic_year' => $request->academic_year,
             'date_of_birth' => $request->date_of_birth,
             'user_id' => $user->id
@@ -175,29 +176,25 @@ class AuthController extends Controller
         $role = $request->user()['role'];
         switch ($role){
             case 0 :{
-                // $profile = User::join('students','students.user_id','=','users.id')
-                //                 ->where('users.id',$user)
-                //                 ->get();
+                $profile = User::with('student.speciality','student.department')->find($user);
 
-                $profile = User::with('student')->find($user);
-              
-                return response()->json(['user' => $profile]);
+                return response()->json(['profile' => $profile]);
             
             }
             case 1 :{
-                $profile = User::with('hod')->find($user);
+                $profile = User::with('hod.department')->find($user);
                 
-                 return response()->json(['user' => $profile]);
+                 return response()->json(['profile' => $profile]);
             }
             case 2 :{
-                $profile = User::with('supervisor')->find($user);
+                $profile = User::with('supervisor.company')->find($user);
                 
-                 return response()->json(['user' => $profile]);
+                 return response()->json(['profile' => $profile]);
             }
         }
         $profile = User::find($user);
         
-        return response()->json(['user' => $profile]);
+        return response()->json(['profile' => $profile]);
 
     }
 }
