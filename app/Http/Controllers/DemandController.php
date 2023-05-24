@@ -21,7 +21,7 @@ class DemandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
 
         $role = $request->user()['role'];
@@ -88,7 +88,7 @@ class DemandController extends Controller
             'motivational_letter' =>'nullable|string'
         ]);
 
-        $student_id = $request->user()->student->id;
+        $student_id = $request->user()->student()->id;
 
 
         if (!User::where('email', $request->supervisor_email)->exists()) {
@@ -174,7 +174,7 @@ class DemandController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $demand = Demand::findOrFail($id);
         return response()->json(compact('demand'));
