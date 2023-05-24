@@ -50,8 +50,8 @@ class AuthController extends Controller
     public function signup(SignupRequest $request): JsonResponse
     {
         $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
+            'first_name' => ' ',
+            'last_name' => ' ',
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
@@ -87,7 +87,10 @@ class AuthController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $user_id = $request->user()->id;
+        $user = $request->user();
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->save();
 
         $student = Student::create([
             'department_id' => $request->department_id,
@@ -96,7 +99,7 @@ class AuthController extends Controller
             'level' => $request->level,
             'academic_year' => $request->academic_year,
             'date_of_birth' => $request->date_of_birth,
-            'user_id' => $user_id
+            'user_id' => $user->id
         ]);
 
         return response()->json([
@@ -125,10 +128,10 @@ class AuthController extends Controller
      */
     public function verifyEmail(Request $request): JsonResponse
     {
-        $code = VerificationCode::where('user_id', $request->user_id)->first();
+        $code = VerificationCode::where('user_id', $request->user()->id)->first();
 
         if ($code->code != $request->code) {
-            return response()->json(['error' => 'Invalid verification code please try again']);
+            return response()->json(['error' => 'Invalid verification code please try again'], 406);
         }
 
         $user = User::findOrFail($request->user_id);

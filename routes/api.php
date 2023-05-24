@@ -13,9 +13,6 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PresenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Department;
-use App\Models\Speciality;
-use App\Models\Company;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Auth routes
 Route::prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::post('/signup', 'signup');
+    Route::post('/register', 'store');
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::post('/email', 'verifyEmail');
@@ -56,9 +54,9 @@ Route::prefix('/demands')->controller(DemandController::class)->middleware('auth
 Route::prefix('/applications')->controller(OfferApplicationController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
     Route::get('/{student_id}/{offer_id}', 'show');
-    Route::post('/new','store');
-    Route::put('/update/{id}','update');
-    Route::delete('/destroy/{id}','destroy');
+    Route::post('/new', 'store');
+    Route::put('/update/{id}', 'update');
+    Route::delete('/destroy/{id}', 'destroy');
 });
 
 // Offers routes
@@ -73,15 +71,15 @@ Route::prefix('/offers')->controller(OfferController::class)->group(function () 
 
 // Internship routes
 Route::prefix('/internships')->group(function () {
-    Route::get('/', [InternshipController::class,'index']);
-    Route::get('/{id}', [InternshipController::class,'show']);
+    Route::get('/', [InternshipController::class, 'index']);
+    Route::get('/{id}', [InternshipController::class, 'show']);
     Route::post('/evaluate', [EvaluationController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::post('/presence', [PresenceController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::post('/certificate', [CertificateController::class, 'store'])->middleware('auth:sanctum', 'verified');
 });
 
 // Super Administrator routes
-Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function(){
+Route::prefix('/accounts')->controller(AccountsController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');
     Route::post('/new', 'store')->middleware('verified');
     Route::put('/update/{id}', 'update')->middleware('verified');
@@ -93,7 +91,7 @@ Route::prefix('/accounts')->controller(AccountsController::class)->middleware('a
 // Extra routes
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/questions', [ContactController::class, 'index']);
-Route::controller(Controller::class)->group(function(){
+Route::controller(Controller::class)->group(function () {
     Route::get('/departments', 'departments');
     Route::get('/specialities', 'specialities');
     Route::get('/companies', 'companies');
