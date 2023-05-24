@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('duration');
-            $table->tinyInteger('level')->nullable();
+            $table->string('level');
             $table->integer('available_spots');
             $table->text('description');
             $table->string('title');

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('department_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('speciality_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('level');
             $table->string('academic_year');
             $table->integer('semester');
             $table->date('date_of_birth');
