@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\DemandController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\InternshipController;
@@ -87,19 +88,13 @@ Route::prefix('/accounts')->controller(AccountsController::class)->middleware('a
     Route::delete('/destroy/{id}', 'destroy')->middleware('verified');
 });
 
+
+
 // Extra routes
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/questions', [ContactController::class, 'index']);
-Route::get('/departments', function (Request $request) {
-    $departments = Department::all();
-    return response()->json(compact('departments'));
+Route::controller(Controller::class)->group(function(){
+    Route::get('/departments', 'departments');
+    Route::get('/specialities', 'specialities');
+    Route::get('/companies', 'companies');
 });
-Route::get('/specialities', function (Request $request) {
-    $specialities = Speciality::all();
-    return response()->json(compact('specialities'));
-});
-Route::get('/companies', function (Request $request) {
-    $companies = Company::all();
-    return response()->json(compact('companies'));
-});
-
