@@ -55,7 +55,8 @@ class DemandController extends Controller
                     return response()->json(compact('hodDemands'));
                 }
             case 2: {
-                    $demands = Demand::where('supervisor_email', $email)->whereIn('status', [1, 3, 4])->get();
+                $supervisor_id = $request->user()->supervisor->id;
+                    $demands = Demand::with('student.user')->where('supervisor_id', $supervisor_id)->whereIn('status', [1, 3, 4])->get();
                     //whereIn('status',[1,3,4]) to fetch only the status the supervisor is concerned about pending accepted or refused by him
 
                     return response()->json(compact('demands'));
@@ -88,7 +89,7 @@ class DemandController extends Controller
             'motivational_letter' =>'nullable|string'
         ]);
 
-        $student_id = $request->user()->student()->id;
+        $student_id = $request->user()->student->id;
 
 
         if (!User::where('email', $request->supervisor_email)->exists()) {
@@ -147,7 +148,7 @@ class DemandController extends Controller
         }
 
         $user = User::where('email', $request->supervisor_email)->first();
-        $supervisor = $user->supervisor();
+        $supervisor = $user->supervisor;
 
         $demand = Demand::create([
             'student_id' => $student_id,

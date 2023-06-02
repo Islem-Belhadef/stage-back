@@ -21,9 +21,9 @@ class OfferController extends Controller
     }
 
 
-    public function supervisorOffers(int $supervisor_id): \Illuminate\Http\JsonResponse
+    public function supervisorOffers(Request $request): \Illuminate\Http\JsonResponse
     {
-        
+             $supervisor_id = $request->user()->supervisor->id;
             $offers = Supervisor::find($supervisor_id)->offers;
              return response()->json(['offers' => $offers]);
     }

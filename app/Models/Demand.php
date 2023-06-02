@@ -19,11 +19,12 @@ class Demand extends Model
         'start_date',
         'end_date',
         'duration',
-        'supervisor_email',
+        // 'supervisor_email',
         'company',
         'date',
         'title',
         'student_id',
+        'supervisor_id',
         'motivational_letter'
     ];
 

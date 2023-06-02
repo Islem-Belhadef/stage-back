@@ -63,7 +63,7 @@ Route::prefix('/applications')->controller(OfferApplicationController::class)->m
 Route::prefix('/offers')->controller(OfferController::class)->group(function () {
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
-    Route::get('/supervisorOffers/{supervisor_id}', 'supervisorOffers')->middleware('auth:sanctum', 'verified');
+    Route::get('/supervisor/offers/', 'supervisorOffers')->middleware('auth:sanctum', 'verified');
     Route::post('/new', 'store')->middleware('auth:sanctum', 'verified');
     Route::put('/update/{id}', 'update')->middleware('auth:sanctum', 'verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum', 'verified');
@@ -92,7 +92,7 @@ Route::prefix('/accounts')->controller(AccountsController::class)->middleware('a
 Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/questions', [ContactController::class, 'index']);
 Route::controller(Controller::class)->group(function () {
-    Route::get('/departments', 'departments');
-    Route::get('/specialities', 'specialities');
+    Route::get('/departments', 'department');
+    Route::get('/specialities', 'speciality');
     Route::get('/companies', 'companies');
 });

@@ -52,7 +52,7 @@ class OfferApplicationController extends Controller
             }
             case 2 : {
                 
-                 $applications = OfferApplication::all();
+                 $applications = OfferApplication::with('student.user','offer')->whereIn('status',[1,3,4])->get();
                  $supervisor_applications = [];
                  foreach($applications as $application){
                       $offer_id = $application->offer_id;
@@ -63,10 +63,11 @@ class OfferApplicationController extends Controller
                         $supervisor_applications[] = $application;
 
                     }
-                    return response()->json(compact('supervisor_applications'));
-                    
+                                   
+                }
+       
 
-                 }
+                return response()->json(compact('supervisor_applications'));
                  
             }
         }

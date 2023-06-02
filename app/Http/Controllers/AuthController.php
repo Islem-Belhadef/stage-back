@@ -53,6 +53,7 @@ class AuthController extends Controller
             'first_name' => ' ',
             'last_name' => ' ',
             'email' => $request->email,
+            'role'=> 0,
             'password' => bcrypt($request->password),
         ]);
 
@@ -75,6 +76,7 @@ class AuthController extends Controller
         return response()->json([
             'token' => $token,
             'user' => $user,
+            'role' => 0,
             'verification' => $verification
         ], 201);
     }
