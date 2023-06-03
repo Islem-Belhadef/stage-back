@@ -24,6 +24,11 @@ class Supervisor extends Model
         return $this->hasMany(Offer::class);
     }
 
+    public function demands(): HasMany
+    {
+        return $this->hasMany(Demand::class);
+    }
+
     public function internships(): HasMany
     {
         return $this->hasMany(Internship::class);

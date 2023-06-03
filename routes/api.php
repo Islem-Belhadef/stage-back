@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Auth routes
 Route::prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::post('/signup', 'signup');
-    Route::post('/register', 'store');
+    Route::post('/register', 'store')->middleware('auth:sanctum');
     Route::post('/login', 'login');
     Route::post('/logout', 'logout')->middleware('auth:sanctum');
     Route::post('/email', 'verifyEmail');
@@ -76,8 +76,6 @@ Route::prefix('/internships')->group(function () {
     Route::post('/evaluate', [EvaluationController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::post('/presence', [PresenceController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::post('/certificate', [CertificateController::class, 'store'])->middleware('auth:sanctum', 'verified');
-    Route::get('/certificate/{id}', [CertificateController::class, 'show'])->middleware('auth:sanctum', 'verified');
-    Route::get('/evaluation/{id}', [EvaluationController::class, 'show'])->middleware('auth:sanctum', 'verified');
 });
 
 // Super Administrator routes

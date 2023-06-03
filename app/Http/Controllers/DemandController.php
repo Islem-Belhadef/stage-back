@@ -38,7 +38,7 @@ class DemandController extends Controller
 
                 }
             case 1: {
-                    $demands = Demand::with('student.user')->whereIn('status', [0, 1, 2])->get();
+                    $demands = Demand::with('student.user','student.speciality')->whereIn('status', [0, 1, 2])->get();
                     //whereIn('status',[0,2,3]) to fetch only the status the hod is concerned about pending accepted or refused by him
                     $hodDemands = [];
                     foreach ($demands as $demand) {
@@ -56,7 +56,7 @@ class DemandController extends Controller
                 }
             case 2: {
                 $supervisor_id = $request->user()->supervisor->id;
-                    $demands = Demand::with('student.user')->where('supervisor_id', $supervisor_id)->whereIn('status', [1, 3, 4])->get();
+                    $demands = Demand::with('student.user','student.speciality')->where('supervisor_id', $supervisor_id)->whereIn('status', [1, 3, 4])->get();
                     //whereIn('status',[1,3,4]) to fetch only the status the supervisor is concerned about pending accepted or refused by him
 
                     return response()->json(compact('demands'));

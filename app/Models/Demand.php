@@ -32,4 +32,9 @@ class Demand extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function supervisor(): BelongsTo
+    {
+        return $this->belongsTo(Supervisor::class);
+    }
 }
