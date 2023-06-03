@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('demands', function (Blueprint $table) {
-            $table->dropColumn('supervisor_email');
+        Schema::table('certificates', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('demands', function (Blueprint $table) {
+        Schema::table('certificates', function (Blueprint $table) {
             //
         });
     }

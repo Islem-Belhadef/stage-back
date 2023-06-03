@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\Internship;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificateController extends Controller
 {
@@ -33,13 +36,13 @@ class CertificateController extends Controller
             'internship_id' => $request->internship_id
         ]);
 
-        $internship = $certificate->internship;
+        $internship = $certificate->internship();
         $student = $internship->student;
-        $studentEmail = $student->user->email;
+        $studentEmail = $student->user()->email;
 
         $department = $student->department;
         $hod = $department->headOfDepartment;
-        $hodEmail = $hod->user->email;
+        $hodEmail = $hod->user()->email;
 
         Mail::to($studentEmail, $hodEmail);
     }
@@ -47,9 +50,33 @@ class CertificateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Certificate $certificate)
+    public function show(string $id): \Illuminate\Http\Response
     {
-        //
+        $internship = Internship::findOrFail($id);
+        $certificate = $internship->certificate();
+        $student = $internship->student();
+        $user = $student->user();
+        $company = $internship->supervisor()->company();
+        $supervisor = $internship->supervisor();
+
+        $pdf = Pdf::loadView('pdf.certificate',
+            [
+                'firstName' => $user->first_name,
+                'lastName' => $user->last_name,
+                'supervisorFirstName' => $supervisor->user()->first_name,
+                'supervisorLastName' => $supervisor->user()->last_name,
+                'birthDate' => $student->date_of_birth,
+                'title' => $internship->title,
+                'department' => $student->department()->name,
+                'speciality' => $student->speciality()->name,
+                'startDate' => $internship->start_date,
+                'endDate' => $internship->end_date,
+                'date' => $certificate->created_at,
+                'company' => $company->name,
+                'address' => $company->address
+            ]
+        );
+        return $pdf->download('certificate.pdf');
     }
 
     /**
