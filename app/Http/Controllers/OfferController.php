@@ -12,20 +12,20 @@ class OfferController extends Controller
     /**
      * Display a listing of the resource.
      */
-    
+
     public function index(): \Illuminate\Http\JsonResponse
     {
         $offers = Offer::with('supervisor.company')->orderByDesc('created_at')->get();
-        
+
         return response()->json(['offers' => $offers]);
     }
 
 
     public function supervisorOffers(Request $request): \Illuminate\Http\JsonResponse
     {
-             $supervisor_id = $request->user()->supervisor->id;
-            $offers = Supervisor::find($supervisor_id)->offers;
-             return response()->json(['offers' => $offers]);
+        $supervisor_id = $request->user()->supervisor->id;
+        $offers = $request->user()->supervisor->offers;
+        return response()->json(['offers' => $offers]);
     }
 
     /**
@@ -47,23 +47,23 @@ class OfferController extends Controller
             'available_spots' => 'required',
             'title' => 'required|min:10|max:200',
             'description' => 'required|min:10|max:3000',
-            'level'=> 'required|string'
+            'level' => 'required|string'
         ]);
-        // get supervisor from the request 
+        // get supervisor from the request
         $supervisor_id = $request->user()->supervisor->id;
 
         $offer = Offer::create([
             'supervisor_id' => $supervisor_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
+            'duration' => (round((strtotime($request->end_date) - strtotime($request->start_date)) / 86400)),
             'level' => $request->level,
             'available_spots' => $request->available_spots,
             'title' => $request->title,
             'description' => $request->description,
         ]);
 
-        return response()->json(['message' => 'Offer created successfully', 'offer' => $offer],201);
+        return response()->json(['message' => 'Offer created successfully', 'offer' => $offer], 201);
     }
 
     /**

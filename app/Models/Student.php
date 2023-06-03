@@ -35,6 +35,11 @@ class Student extends Model
         return $this->hasMany(OfferApplication::class);
     }
 
+    public function demands(): HasMany
+    {
+        return $this->hasMany(Demand::class);
+    }
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
