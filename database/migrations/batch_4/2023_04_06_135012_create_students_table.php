@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('academic_year');
             $table->integer('semester');
             $table->date('date_of_birth');
+            $table->string('place_of_birth')->default('Constantine');
         });
 
         Schema::enableForeignKeyConstraints();

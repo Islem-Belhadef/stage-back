@@ -10,8 +10,6 @@ class Evaluation extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     public function internship(): BelongsTo
     {
         return $this->belongsTo(Internship::class);

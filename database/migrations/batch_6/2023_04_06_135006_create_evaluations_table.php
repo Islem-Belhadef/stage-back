@@ -21,6 +21,8 @@ return new class extends Migration
             $table->float('initiative');
             $table->float('innovation');
             $table->float('acquired_knowledge');
+            $table->timestamps();
+            $table->text('global_appreciation')->nullable();
         });
 
         Schema::enableForeignKeyConstraints();

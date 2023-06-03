@@ -53,22 +53,23 @@ class CertificateController extends Controller
     public function show(string $id): \Illuminate\Http\Response
     {
         $internship = Internship::findOrFail($id);
-        $certificate = $internship->certificate();
-        $student = $internship->student();
-        $user = $student->user();
-        $company = $internship->supervisor()->company();
-        $supervisor = $internship->supervisor();
+        $certificate = $internship->certificate;
+        $student = $internship->student;
+        $user = $student->user;
+        $company = $internship->supervisor->company;
+        $supervisor = $internship->supervisor;
 
         $pdf = Pdf::loadView('pdf.certificate',
             [
                 'firstName' => $user->first_name,
                 'lastName' => $user->last_name,
-                'supervisorFirstName' => $supervisor->user()->first_name,
-                'supervisorLastName' => $supervisor->user()->last_name,
+                'supervisorFirstName' => $supervisor->user->first_name,
+                'supervisorLastName' => $supervisor->user->last_name,
                 'birthDate' => $student->date_of_birth,
+                'birthPlace'=> $student->place_of_birth,
                 'title' => $internship->title,
-                'department' => $student->department()->name,
-                'speciality' => $student->speciality()->name,
+                'department' => $student->department->name,
+                'speciality' => $student->speciality->name,
                 'startDate' => $internship->start_date,
                 'endDate' => $internship->end_date,
                 'date' => $certificate->created_at,
