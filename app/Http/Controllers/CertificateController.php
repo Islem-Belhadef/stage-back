@@ -72,11 +72,11 @@ class CertificateController extends Controller
                 'speciality' => $student->speciality->name,
                 'startDate' => $internship->start_date,
                 'endDate' => $internship->end_date,
-                'date' => $certificate->created_at,
+                'date' => date('Y-m-d', strtotime($certificate->created_at)),
                 'company' => $company->name,
                 'address' => $company->address
             ]
-        );
+        )->setPaper('a4','landscape');
         return $pdf->download('certificate.pdf');
     }
 
