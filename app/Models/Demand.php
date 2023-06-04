@@ -19,17 +19,22 @@ class Demand extends Model
         'start_date',
         'end_date',
         'duration',
-        // 'supervisor_email',
         'company',
         'date',
         'title',
         'student_id',
         'supervisor_id',
-        'motivational_letter'
+        'motivational_letter',
+        'rejection_motive',
     ];
 
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function supervisor(): BelongsTo
+    {
+        return $this->belongsTo(Supervisor::class);
     }
 }

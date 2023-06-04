@@ -106,6 +106,7 @@ class AuthController extends Controller
 
         return response()->json([
             'student' => $student,
+            'role' => 0
         ], 201);
     }
 
@@ -136,7 +137,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid verification code please try again'], 406);
         }
 
-        $user = User::findOrFail($request->user_id);
+        $user = User::findOrFail($request->user()->id);
         $user->email_verified_at = date("Y-m-d h:i:sa");
         $user->save();
 
