@@ -13,6 +13,7 @@ class OfferApplication extends Model
     protected $fillable = [
         'student_id',
         'offer_id',
+        'status',
         'rejection_motive',
     ];
 

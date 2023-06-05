@@ -28,15 +28,15 @@ class EvaluationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Internship $internship)
+    public function store(Request $request)
     {
         $evaluation = Evaluation::create([
-            'internship_id' => $internship->id,
+            'internship_id' =>$request->internship_id,
             'discipline' => $request->discipline,
             'aptitude' => $request->aptitude,
             'initiative' => $request->initiative,
             'innovation' => $request->innovation,
-            'acquired_knowledge' => $request->acquiredKnowledge
+            'acquired_knowledge' => $request->acquired_knowledge
         ]);
 
         return response()->json(compact('evaluation'), 201);

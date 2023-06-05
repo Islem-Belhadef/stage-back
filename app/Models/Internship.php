@@ -12,6 +12,16 @@ class Internship extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'student_id',
+        'supervisor_id',
+        'start_date',
+        'end_date',
+        'duration',
+        'title',
+
+    ];
+
     public $timestamps = false;
 
     public function student(): BelongsTo

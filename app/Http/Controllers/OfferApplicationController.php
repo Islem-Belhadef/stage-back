@@ -104,7 +104,7 @@ class OfferApplicationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OfferApplication $offerApplication, string $student_id, string $offer_id)
+    public function show(string $student_id, string $offer_id)
     {
         $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
         return response()->json(compact('application'));
@@ -121,32 +121,36 @@ class OfferApplicationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
+    public function update(Request $request , string $student_id, string $offer_id): \Illuminate\Http\JsonResponse
     {
-        $application = OfferApplication::findOrFail($id);
-
         // status:2,4 => rejected
         if ($request->status == 2 or $request->status == 4) {
-            $application->rejection_motive = $request->rejection_motive;
-            $application->status = $request->status;
-            $application->save();
+        
+            OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->update(['rejection_motive' => $request->rejection_motive,'status' => $request->status]);
+             $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
             return response()->json(['application' => $application]);
         }
+      
 
-        $application->status = $request->status;
-        $application->save();
+        OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->update(['status' => $request->status]);
+        $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
+
+
 
         // status:3 => accepted by HOD and supervisor
         if ($request->status == 3) {
+            $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
+
             $internship = Internship::create([
-                'student_id' => $request->student_id,
-                'supervisor_id' => $request->supervisor_id,
-                'start_date' => $application->start_date,
-                'end_date' => $application->end_date,
-                'duration' => $application->duration,
-                'title' => $application->title
+                'student_id' => $application->student_id,
+                'supervisor_id' => $application->offer->supervisor_id,
+                'start_date' => $application->offer->start_date,
+                'end_date' => $application->offer->end_date,
+                'duration' => $application->offer->duration,
+                'title' => $application->offer->title
             ]);
             return response()->json(compact('application', 'internship'));
+          
         }
 
         return response()->json(compact('application'));

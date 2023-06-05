@@ -10,6 +10,18 @@ class Evaluation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'internship_id' ,
+        'discipline' ,
+        'aptitude' ,
+        'initiative' ,
+        'innovation' ,
+        'acquired_knowledge',
+        'global_appreciation'
+
+    ];
+
+
     public function internship(): BelongsTo
     {
         return $this->belongsTo(Internship::class);

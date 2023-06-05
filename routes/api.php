@@ -55,7 +55,7 @@ Route::prefix('/applications')->controller(OfferApplicationController::class)->m
     Route::get('/', 'index');
     Route::get('/{student_id}/{offer_id}', 'show');
     Route::post('/new', 'store');
-    Route::put('/update/{id}', 'update');
+    Route::put('/update/{student_id}/{offer_id}', 'update');
     Route::delete('/destroy/{id}', 'destroy');
 });
 
@@ -71,7 +71,7 @@ Route::prefix('/offers')->controller(OfferController::class)->group(function () 
 
 // Internship routes
 Route::prefix('/internships')->group(function () {
-    Route::get('/', [InternshipController::class, 'index']);
+    Route::get('/', [InternshipController::class, 'index'])->middleware('auth:sanctum', 'verified');
     Route::get('/{id}', [InternshipController::class, 'show']);
     Route::post('/evaluate', [EvaluationController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::post('/presence', [PresenceController::class, 'store'])->middleware('auth:sanctum', 'verified');
