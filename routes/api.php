@@ -66,6 +66,7 @@ Route::prefix('/offers')->controller(OfferController::class)->group(function () 
     Route::get('/{id}', 'show');
     Route::get('/supervisor/offers/', 'supervisorOffers')->middleware('auth:sanctum', 'verified');
     Route::post('/new', 'store')->middleware('auth:sanctum', 'verified');
+    Route::put('/edit/{id}', 'edit')->middleware('auth:sanctum', 'verified');
     Route::put('/update/{id}', 'update')->middleware('auth:sanctum', 'verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum', 'verified');
     Route::get('/isApplied/{id}', 'checkApplication')->middleware('auth:sanctum', 'verified');

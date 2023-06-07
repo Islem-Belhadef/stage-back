@@ -78,11 +78,33 @@ class OfferController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * edit offer info
      */
-    public function edit(Offer $offer)
+    public function edit(Request $request, string $id)
     {
-        //
+        $offer = Offer::findOrFail($id);
+
+        $offer->update([
+            "title" => ($request->title) ? $request->title : $offer->title,
+            "level" => ($request->level) ? $request->level : $offer->level,
+            "available_spots" => ($request->available_spots) ? $request->available_spots : $offer->available_spots,
+            "start_date" => ($request->start_date) ? $request->start_date : $offer->start_date,
+            "end_date" => ($request->end_date) ? $request->end_date : $offer->end_date,
+            "duration" => $request->start_date && $request->end_date
+                            ? round((strtotime($request->end_date) - strtotime($request->start_date)) / 86400)
+                                : ($request->start_date && !$request->end_date
+                                   ? round((strtotime($offer->end_date) - strtotime($request->start_date)) / 86400)
+                                     : (!$request->start_date && $request->end_date
+                                         ? round((strtotime($request->end_date) - strtotime($offer->start_date)) / 86400)
+                                           : $offer->duration)),
+        ]);
+
+        $message = 'offer information updated successfully';
+        return response()->json(compact('message', 'offer'),200);
     }
+
+    
+    
 
     /**
      * Update the specified resource in storage.
@@ -105,7 +127,7 @@ class OfferController extends Controller
         return response()->json(compact('message'));
     }
 
-    
+
 
     public function checkApplication(Request $request,string $id)
     { 

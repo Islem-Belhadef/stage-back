@@ -200,7 +200,13 @@ class DemandController extends Controller
                 "company" => ($request->company) ? $request->company : $demand->company,
                 "start_date" => ($request->start_date) ? $request->start_date : $demand->start_date,
                 "end_date" => ($request->end_date) ? $request->end_date : $demand->end_date,
-                'duration' => (($request->start_date)&&($request->end_date))?(round((strtotime($request->end_date)-strtotime($request->start_date))/86400)):$demand->duration,
+                "duration" => $request->start_date && $request->end_date
+                            ? round((strtotime($request->end_date) - strtotime($request->start_date)) / 86400)
+                                : ($request->start_date && !$request->end_date
+                                   ? round((strtotime($demand->end_date) - strtotime($request->start_date)) / 86400)
+                                     : (!$request->start_date && $request->end_date
+                                         ? round((strtotime($request->end_date) - strtotime($demand->start_date)) / 86400)
+                                           : $demand->duration)),
             ]);
     
             $message = 'Demand information updated successfully';
