@@ -46,6 +46,7 @@ Route::prefix('/demands')->controller(DemandController::class)->middleware('auth
     Route::get('/', 'index');
     Route::get('/{id}', 'show');
     Route::post('/new', 'store')->middleware('verified');
+    Route::put('/edit/{id}', 'edit')->middleware('verified');
     Route::put('/update/{id}', 'update')->middleware('verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('verified');
 });

@@ -24,6 +24,7 @@ class Demand extends Model
         'title',
         'student_id',
         'supervisor_id',
+        'supervisor_email',
         'motivational_letter',
         'rejection_motive',
     ];

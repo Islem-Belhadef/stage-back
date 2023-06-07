@@ -113,6 +113,7 @@ class DemandController extends Controller
                 'end_date' => $request->end_date,
                 'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
                 'supervisor_id' => $supervisor->id,
+                'supervisor_email' => $request->supervisor_email,
                 'company' => $request->company,
                 'status' => 0,
                 'rejection_motive' => null,
@@ -156,6 +157,7 @@ class DemandController extends Controller
             'end_date' => $request->end_date,
             'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
             'supervisor_id' => $supervisor->id,
+            'supervisor_email' => $request->supervisor_email,
             'company' => $request->company,
             'status' => 0,
             'rejection_motive' => null,
@@ -183,14 +185,37 @@ class DemandController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * edit demand info
      */
-    public function edit(Demand $demand)
+    public function edit(Request $request, string $id)
     {
         //
+        $demand = Demand::findOrFail($id);
+
+        if($demand->status == 0){
+            
+            $demand->update([
+                "title" => ($request->title) ? $request->title : $demand->title,
+                "supervisor_email" => ($request->supervisor_email) ? $request->supervisor_email : $demand->supervisor_email,
+                "company" => ($request->company) ? $request->company : $demand->company,
+                "start_date" => ($request->start_date) ? $request->start_date : $demand->start_date,
+                "end_date" => ($request->end_date) ? $request->end_date : $demand->end_date,
+                'duration' => (($request->start_date)&&($request->end_date))?(round((strtotime($request->end_date)-strtotime($request->start_date))/86400)):$demand->duration,
+            ]);
+    
+            $message = 'Demand information updated successfully';
+            return response()->json(compact('message', 'demand'),200);
+        }
+
+        $message = 'cannot edit demand';
+        return response()->json(compact('message'));
+
+
     }
 
     /**
      * Update the specified resource in storage.
+     * change demand status
      */
     public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
