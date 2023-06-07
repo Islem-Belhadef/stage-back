@@ -56,7 +56,7 @@ Route::prefix('/applications')->controller(OfferApplicationController::class)->m
     Route::get('/{student_id}/{offer_id}', 'show');
     Route::post('/new', 'store');
     Route::put('/update/{student_id}/{offer_id}', 'update');
-    Route::delete('/destroy/{student_id}/{offer_id}', 'destroy');
+    Route::delete('/destroy/{offer_id}', 'destroy');
 });
 
 // Offers routes

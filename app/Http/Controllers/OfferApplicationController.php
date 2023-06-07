@@ -159,16 +159,17 @@ class OfferApplicationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $student_id, string $offer_id): \Illuminate\Http\JsonResponse
+    public function destroy(Request $request , string $offer_id): \Illuminate\Http\JsonResponse
     {
+        $student_id = $request->user()->student->id;
         $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
 
         if ($application->status == 1 or $application->status == 3) {
-            return response()->json(['message' => "already accepted cannot remove"]);
+            return response()->json(['message' => "application already accepted"],403);
         }
 
-        $application->delete();
 
+        $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->delete();
         return response()->json(['message' => "Application deleted"],200);
     }
 }
