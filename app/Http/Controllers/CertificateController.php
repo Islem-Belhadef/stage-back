@@ -36,15 +36,17 @@ class CertificateController extends Controller
             'internship_id' => $request->internship_id
         ]);
 
-        $internship = $certificate->internship();
-        $student = $internship->student;
-        $studentEmail = $student->user()->email;
+        return response()->json(compact('certificate'), 201);
 
-        $department = $student->department;
-        $hod = $department->headOfDepartment;
-        $hodEmail = $hod->user()->email;
+        // $internship = $certificate->internship();
+        // $student = $internship->student;
+        // $studentEmail = $student->user()->email;
 
-        Mail::to($studentEmail, $hodEmail);
+        // $department = $student->department;
+        // $hod = $department->headOfDepartment;
+        // $hodEmail = $hod->user()->email;
+
+        // Mail::to($studentEmail, $hodEmail);
     }
 
     /**
@@ -102,5 +104,12 @@ class CertificateController extends Controller
     public function destroy(Certificate $certificate)
     {
         //
+    }
+
+    public function checkCertification(Request $request,string $id)
+    { 
+        $isCertified = Certificate::where('internship_id',$id)->exists();
+    
+        return response()->json(compact('isCertified'), 200);
     }
 }

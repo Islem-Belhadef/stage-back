@@ -107,4 +107,11 @@ class EvaluationController extends Controller
     {
         //
     }
+
+    public function checkEvaluation(Request $request,string $id)
+    { 
+        $isEvaluated = Evaluation::where('internship_id',$id)->exists();
+    
+        return response()->json(compact('isEvaluated'), 200);
+    }
 }

@@ -10,6 +10,11 @@ class Presence extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'internship_id',
+        'presence',
+    ];
+
     public function internship(): BelongsTo
     {
         return $this->belongsTo(Internship::class);

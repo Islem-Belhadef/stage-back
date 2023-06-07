@@ -78,6 +78,9 @@ Route::prefix('/internships')->group(function () {
     Route::post('/certificate', [CertificateController::class, 'store'])->middleware('auth:sanctum', 'verified');
     Route::get('/certificate/{id}', [CertificateController::class, 'show'])->middleware('auth:sanctum', 'verified');
     Route::get('/evaluation/{id}', [EvaluationController::class, 'show'])->middleware('auth:sanctum', 'verified');
+    Route::get('/isCertified/{id}', [CertificateController::class, 'checkCertification'])->middleware('auth:sanctum', 'verified');
+    Route::get('/isEvaluated/{id}', [EvaluationController::class, 'checkEvaluation'])->middleware('auth:sanctum', 'verified');
+    Route::get('/presence/latest', [PresenceController::class, 'latest'])->middleware('auth:sanctum', 'verified');
 });
 
 // Super Administrator routes

@@ -10,6 +10,10 @@ class Certificate extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'internship_id',
+    ];
+
     public function internship(): BelongsTo
     {
         return $this->belongsTo(Internship::class);

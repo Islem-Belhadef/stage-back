@@ -37,7 +37,7 @@ class InternshipController extends Controller
 
                 case 2: {
                      $supervisor_id = $request->user()->supervisor->id;
-                    $internships = Internship::with('student.user')->where('supervisor_id', $supervisor_id)->get();
+                      $internships = Internship::with('student.user','student.department','student.speciality','supervisor.user','supervisor.company')->where('supervisor_id', $supervisor_id)->get();
                     return response()->json(compact('internships'));
                   
                     
