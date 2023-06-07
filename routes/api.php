@@ -67,6 +67,8 @@ Route::prefix('/offers')->controller(OfferController::class)->group(function () 
     Route::post('/new', 'store')->middleware('auth:sanctum', 'verified');
     Route::put('/update/{id}', 'update')->middleware('auth:sanctum', 'verified');
     Route::delete('/destroy/{id}', 'destroy')->middleware('auth:sanctum', 'verified');
+    Route::get('/isApplied/{id}', 'checkApplication')->middleware('auth:sanctum', 'verified');
+
 });
 
 // Internship routes

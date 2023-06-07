@@ -31,7 +31,7 @@ class OfferApplicationController extends Controller
 
             }
             case 1 : {
-                $applications = OfferApplication::with('student.user','offer')->whereIn('status',[0,1,2])->get();
+                $applications = OfferApplication::with('student.user','offer','offer.supervisor.company','student.speciality')->whereIn('status',[0,1,2])->get();
                 $hodApplications = [];
                 foreach($applications as $application) {
                     $student_id = $application->student_id;
@@ -52,7 +52,7 @@ class OfferApplicationController extends Controller
             }
             case 2 : {
                 
-                 $applications = OfferApplication::with('student.user','offer')->whereIn('status',[1,3,4])->get();
+                 $applications = OfferApplication::with('student.user','offer','student.speciality')->whereIn('status',[1,3,4])->get();
                  $supervisor_applications = [];
                  foreach($applications as $application){
                       $offer_id = $application->offer_id;
@@ -159,16 +159,16 @@ class OfferApplicationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): \Illuminate\Http\JsonResponse
+    public function destroy(string $student_id, string $offer_id): \Illuminate\Http\JsonResponse
     {
-        $application = OfferApplication::findOrFail($id);
+        $application = OfferApplication::where('student_id',$student_id)->where('offer_id',$offer_id)->first();
 
         if ($application->status == 1 or $application->status == 3) {
-            return response()->json(['message' => "Application has already been accepted, you can't remove it"]);
+            return response()->json(['message' => "already accepted cannot remove"]);
         }
 
         $application->delete();
 
-        return response()->json(['message' => "Application deleted"]);
+        return response()->json(['message' => "Application deleted"],200);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Offer;
+use App\Models\OfferApplication;
 use App\Models\Company;
 use App\Models\Supervisor;
 use Illuminate\Http\Request;
@@ -102,5 +103,15 @@ class OfferController extends Controller
         $offer->delete();
         $message = 'Offer deleted successfully';
         return response()->json(compact('message'));
+    }
+
+    
+
+    public function checkApplication(Request $request,string $id)
+    { 
+        $student_id = $request->user()->student->id;
+        $isApplied = OfferApplication::where('student_id',$student_id)->where('offer_id',$id)->exists();
+    
+        return response()->json(compact('isApplied'), 200);
     }
 }
