@@ -173,6 +173,8 @@ class AccountsController extends Controller
                 "level" => ($request->level) ? $request->level : $student->level,
                 "academic_year" => ($request->academic_year) ? $request->academic_year : $student->academic_year,
                 "date_of_birth" => ($request->date_of_birth) ? $request->date_of_birth : $student->date_of_birth,
+                "cv" => ($request->cv) ? $request->cv : $student->cv,
+                "github" => ($request->github) ? $request->github : $student->github,
             ]);
 
             return response()->json(compact('message', 'user'));
