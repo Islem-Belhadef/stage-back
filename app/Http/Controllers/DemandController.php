@@ -180,6 +180,7 @@ class DemandController extends Controller
                                            : $demand->duration)),
             ]);
     
+            
             $message = 'Demand information updated successfully';
             return response()->json(compact('message', 'demand'),200);
         }

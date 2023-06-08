@@ -41,6 +41,7 @@ Route::prefix('/auth')->controller(AuthController::class)->group(function () {
     Route::get('/profile', 'getProfile')->middleware('auth:sanctum', 'verified');
 });
 
+
 // Internship demands routes
 Route::prefix('/demands')->controller(DemandController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/', 'index');

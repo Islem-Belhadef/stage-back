@@ -79,6 +79,7 @@ class AuthController extends Controller
             'user' => $user,
             'role' => 0,
             'verification' => $verification
+            
         ], 201);
     }
 
