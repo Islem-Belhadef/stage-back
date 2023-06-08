@@ -8,6 +8,7 @@ use App\Models\Demand;
 use App\Models\Internship;
 use App\Models\Supervisor;
 use App\Models\Student;
+use App\Models\Company;
 use App\Models\HeadOfDepartment;
 use App\Models\User;
 use App\Models\VerificationCode;
@@ -93,26 +94,13 @@ class DemandController extends Controller
 
 
         if (!User::where('email', $request->supervisor_email)->exists()) {
-            $password = Str::random(12);
-
-            $user = User::create([
-                'email' => $request->supervisor_email,
-                'password' => bcrypt($password),
-                'first_name' => '',
-                'last_name' => '',
-                'role' => 2
-            ]);
-
-            $supervisor = Supervisor::create([
-                'user_id' => $user->id,
-            ]);
 
             $demand = Demand::create([
                 'student_id' => $student_id,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
                 'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
-                'supervisor_id' => $supervisor->id,
+                // 'supervisor_id' => $supervisor->id,
                 'supervisor_email' => $request->supervisor_email,
                 'company' => $request->company,
                 'status' => 0,
@@ -122,27 +110,10 @@ class DemandController extends Controller
             ]);
 
 
-            // Random 6 characters code to verify email address
-            $code = '';
-
-            for ($i = 0; $i < 6; $i++) {
-                $code = $code . strval(rand(0, 9));
-            }
-
-            $verification = VerificationCode::create([
-                'user_id' => $user->id,
-                'code' => $code
-            ]);
-
-            Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
-
-            Mail::to($demand->supervisor_email)->send(new ConfirmEmail('supervisor', $code));
-
             return response()->json(
                 [
-                    "message" => "account created and email sent successfully",
-                    "demand" => $demand, "user" => $user, "supervisor" => $supervisor,
-                    "password" => $password, 'verification' => $verification
+                    "message" => "demand created successfully",
+                    "demand" => $demand,
                 ],
                 201
             );
@@ -157,7 +128,7 @@ class DemandController extends Controller
             'end_date' => $request->end_date,
             'duration' => (round((strtotime($request->end_date)-strtotime($request->start_date))/86400)),
             'supervisor_id' => $supervisor->id,
-            'supervisor_email' => $request->supervisor_email,
+            // 'supervisor_email' => $request->supervisor_email,
             'company' => $request->company,
             'status' => 0,
             'rejection_motive' => null,
@@ -238,11 +209,63 @@ class DemandController extends Controller
         $demand->status = $request->status;
         $demand->save();
 
+        // if demand accepted by HOD and supervisor doesnt exist create supervisor account 
+        if($request->status == 1 && !$demand->supervisor_id){
+            $password = Str::random(12);
+
+            $user = User::create([
+                'email' => $demand->supervisor_email,
+                'password' => bcrypt($password),
+                'first_name' => '',
+                'last_name' => '',
+                'role' => 2
+            ]);
+
+            $company = Company::create([
+                'name'=> $demand->company,
+            ]);
+
+            $supervisor = Supervisor::create([
+                'user_id' => $user->id,
+                'company_id' =>$company->id,
+            ]);
+
+            $demand->supervisor_id = $supervisor->id;
+            $demand->save();
+
+            // Random 6 characters code to verify email address
+            $code = '';
+
+            for ($i = 0; $i < 6; $i++) {
+                $code = $code . strval(rand(0, 9));
+            }
+
+            $verification = VerificationCode::create([
+                'user_id' => $user->id,
+                'code' => $code
+            ]);
+
+            Mail::to($demand->supervisor_email)->send(new AccountCreated('supervisor', $demand->supervisor_email, $password));
+            Mail::to($demand->supervisor_email)->send(new ConfirmEmail('supervisor', $code));
+
+            return response()->json(
+                [
+                    "message" => "demand accepted and account created and email sent successfully",
+                    "demand" => $demand, 
+                    "user" => $user, 
+                    "supervisor" => $supervisor,
+                    "password" => $password, 
+                    "verification" => $verification
+                ],
+                201
+            );
+        }
+
         // status:3 => accepted by HOD and supervisor
         if ($request->status == 3) {
             $internship = Internship::create([
                 'student_id' => $demand->student_id,
-                'supervisor_id' => $request->supervisor_id,
+                'supervisor_id' => $demand->supervisor_id,
                 'start_date' => $demand->start_date,
                 'end_date' => $demand->end_date,
                 'duration' => $demand->duration,

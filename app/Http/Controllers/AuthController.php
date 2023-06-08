@@ -37,8 +37,9 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken('access_token')->plainTextToken;
         $role = Auth::user()->role;
+        $isVerified = (Auth::user()->email_verified_at)?true:false;
 
-        return response()->json(compact('token', 'role', 'user'));
+        return response()->json(compact('token', 'role', 'user','isVerified'));
     }
 
     /**
