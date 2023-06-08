@@ -180,7 +180,7 @@ class DemandController extends Controller
                                            : $demand->duration)),
             ]);
     
-            
+
             $message = 'Demand information updated successfully';
             return response()->json(compact('message', 'demand'),200);
         }
@@ -226,6 +226,7 @@ class DemandController extends Controller
                 'name'=> $demand->company,
             ]);
 
+            
             $supervisor = Supervisor::create([
                 'user_id' => $user->id,
                 'company_id' =>$company->id,
